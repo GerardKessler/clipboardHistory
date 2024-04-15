@@ -51,6 +51,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.switch= False
 		self.monitor= None
 		self.sounds= None
+		self.max_elements= None
 		
 		if hasattr(globalVars, 'clipboardHistory'):
 			self.postStartupHandler()
@@ -86,9 +87,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_viewData(self, gesture):
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
-		cursor.execute('SELECT sounds FROM settings')
+		cursor.execute('SELECT sounds, max_elements FROM settings')
 		settings= cursor.fetchone()
-		self.sounds= settings[0]
+		self.sounds, self.max_elements= settings[0], settings[1]
 		if len(self.data) < 1:
 			ui.message(_('Historial vacío'))
 			return
@@ -242,7 +243,10 @@ escape; desactiva la capa de comandos
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_settings(self, gesture):
-		pass
+		self.finish()
+		self.settings_dialog= Settings(gui.mainFrame, self.sounds, self.max_elements)
+		gui.mainFrame.prePopup()
+		self.settings_dialog.Show()
 
 	def terminate(self):
 		if cursor and connect:
@@ -265,3 +269,49 @@ escape; desactiva la capa de comandos
 		'kb:s': 'settings',
 		'kb:z': 'historyDelete',
 		'kb:escape': 'close'}
+
+class Settings(wx.Dialog):
+	def __init__(self, parent, sounds, max_elements):
+		super().__init__(parent, title=_('Configuraciones'))
+
+		# Panel principal
+		panel= wx.Panel(self)
+
+		# StaticText y ListBox para seleccionar el número máximo de cadenas
+		max_elements_label = wx.StaticText(panel, label=_('Selecciona el número máximo de cadenas a guardar en la base de datos. 0 indica sin límite:'))
+		self.max_elements_listbox = wx.ListBox(panel, choices=['0', '250', '500', '1000', '2000', '5000'])
+		self.max_elements_listbox.SetStringSelection(str(max_elements))
+		self.max_elements_listbox.SetFocus()
+
+		# Checkbox para activar los sonidos
+		self.sounds_checkbox= wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
+		self.sounds_checkbox.SetValue(sounds)
+
+		# Botones Guardar cambios y Cancelar
+		save_button = wx.Button(panel, label='Guardar cambios')
+		cancel_button = wx.Button(panel, label='Cancelar')
+		save_button.Bind(wx.EVT_BUTTON, self.onSave)
+		cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
+
+		# Sizer para organizar los elementos
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(self.sounds_checkbox, 0, wx.ALL, 10)
+		sizer.Add(max_elements_label, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+		sizer.Add(self.max_elements_listbox, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+		sizer.Add(save_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
+		sizer.Add(cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+
+		panel.SetSizer(sizer)
+		sizer.Fit(self)
+
+	def onSave(self, event):
+		sounds= self.sounds_checkbox.GetValue()
+		max_elements= int(self.max_elements_listbox.GetStringSelection())
+		cursor.execute('UPDATE settings SET sounds=?, max_elements=?', (sounds, max_elements))
+		connect.commit()
+		self.Destroy()
+		gui.mainFrame.postPopup()
+
+	def onCancel(self, event):
+		self.Destroy()
+		gui.mainFrame.postPopup()

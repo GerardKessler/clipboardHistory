@@ -81,7 +81,7 @@ class ClipboardMonitor:
 				counter= cursor.fetchall()
 				cursor.execute('SELECT max_elements FROM settings')
 				max_elements= cursor.fetchone()
-				if len(counter) > max_elements[0]:
+				if max_elements[0] != 0 and len(counter) > max_elements[0]:
 					cursor.execute('DELETE FROM strings WHERE id=?', (counter[0][0],))
 					connect.commit()
 
