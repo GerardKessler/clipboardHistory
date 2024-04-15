@@ -19,6 +19,8 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	connect= sql.connect(os.path.join(root_path, "clipboard_history"), check_same_thread= False)
 	cursor= connect.cursor()
 	cursor.execute('CREATE TABLE strings (string TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
+	cursor.execute('CREATE TABLE settings (sounds BOOLEAN, max_elements INTEGER)')
+	cursor.execute('INSERT INTO settings (sounds, max_elements) VALUES (0, 250)')
 	connect.commit()
 	cursor.execute('VACUUM')
 	connect.commit()

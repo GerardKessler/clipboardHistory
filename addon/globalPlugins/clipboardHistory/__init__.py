@@ -50,6 +50,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.x= 0
 		self.switch= False
 		self.monitor= None
+		self.sounds= None
 		
 		if hasattr(globalVars, 'clipboardHistory'):
 			self.postStartupHandler()
@@ -85,6 +86,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_viewData(self, gesture):
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
+		cursor.execute('SELECT sounds FROM settings')
+		settings= cursor.fetchone()
+		self.sounds= settings[0]
 		if len(self.data) < 1:
 			ui.message(_('Historial vacío'))
 			return
@@ -106,7 +110,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.x= 0
 		elif key == 'end':
 			self.x= len(self.data)-1
-		playWaveFile(os.path.join(dirAddon, "sounds", "click.wav"))
+		if self.sounds: playWaveFile(os.path.join(dirAddon, "sounds", "click.wav"))
 		self.speak()
 
 	def script_copyItem(self, gesture):
@@ -123,7 +127,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.x][0],))
 		connect.commit()
 		self.data.pop(self.x)
-		playWaveFile(os.path.join(dirAddon, "sounds", "delete.wav"))
+		if self.sounds: playWaveFile(os.path.join(dirAddon, "sounds", "delete.wav"))
 		if len(self.data) < 1:
 			ui.message(_('Lista vacía'))
 			self.finish()
@@ -207,6 +211,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 Flecha arriba; anterior elemento de la lista
 Flecha abajo; siguiente elemento de la lista
 Inicio; primer elemento de la lista
+fin; último elemento de la lista
 Flecha derecha; copia el elemento actual al portapapeles y lo desplaza al comienzo de la lista
 Flecha izquierda; abre el contenido del elemento actual en una ventana de NVDA
 Retroceso; elimina el actual elemento de la lista
@@ -236,6 +241,9 @@ escape; desactiva la capa de comandos
 					mute(0.3, _('Dato incorrecto o fuera de rango'))
 		gui.runScriptModalDialog(get_search, callback)
 
+	def script_settings(self, gesture):
+		pass
+
 	def terminate(self):
 		if cursor and connect:
 			cursor.close()
@@ -254,5 +262,6 @@ escape; desactiva la capa de comandos
 		'kb:f': 'findItem',
 		'kb:f3': 'searchNextItem',
 		'kb:g': 'indexSearch',
+		'kb:s': 'settings',
 		'kb:z': 'historyDelete',
 		'kb:escape': 'close'}
