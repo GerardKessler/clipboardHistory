@@ -55,6 +55,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.monitor= None
 		self.sounds= None
 		self.max_elements= None
+		self.number= None
 		
 		if hasattr(globalVars, 'clipboardHistory'):
 			self.postStartupHandler()
@@ -94,9 +95,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_viewData(self, gesture):
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
-		cursor.execute('SELECT sounds, max_elements FROM settings')
+		cursor.execute('SELECT sounds, max_elements, number FROM settings')
 		settings= cursor.fetchone()
-		self.sounds, self.max_elements= settings[0], settings[1]
+		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
 		if len(self.data) < 1:
 			ui.message(_('Historial vacío'))
 			return
@@ -145,7 +146,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.speak()
 
 	def speak(self):
-		ui.message(f'{self.x+1}; {self.data[self.x][0]}')
+		if self.number:
+			ui.message(f'{self.x+1}; {self.data[self.x][0]}')
+		else:
+			ui.message(self.data[self.x][0])
 
 	def script_pasteItem(self, gesture):
 		api.copyToClip(self.data[self.x][0])
@@ -228,6 +232,7 @@ v; Pega el contenido del elemento actual en la ventana con el foco
 f; activa la ventana para buscar elementos en la lista
 f3; avanza a la siguiente coincidencia  del texto buscado
 g; activa la ventana para enfocar el elemento por número de órden
+e; verbaliza el número de índice del elemento actual, y el número total de la lista
 s; activa la ventana de configuración del complemento
 escape; desactiva la capa de comandos
 		''')
@@ -253,9 +258,12 @@ escape; desactiva la capa de comandos
 
 	def script_settings(self, gesture):
 		self.finish()
-		self.settings_dialog= Settings(gui.mainFrame, self.sounds, self.max_elements)
+		self.settings_dialog= Settings(gui.mainFrame, self.sounds, self.max_elements, self.number)
 		gui.mainFrame.prePopup()
 		self.settings_dialog.Show()
+
+	def script_indexAnnounce(self, gesture):
+		ui.message(f'{self.x+1} de {len(self.data)}')
 
 	def terminate(self):
 		if cursor and connect:
@@ -275,12 +283,13 @@ escape; desactiva la capa de comandos
 		'kb:f': 'findItem',
 		'kb:f3': 'searchNextItem',
 		'kb:g': 'indexSearch',
+		'kb:e': 'indexAnnounce',
 		'kb:s': 'settings',
 		'kb:z': 'historyDelete',
 		'kb:escape': 'close'}
 
 class Settings(wx.Dialog):
-	def __init__(self, parent, sounds, max_elements):
+	def __init__(self, parent, sounds, max_elements, number):
 		super().__init__(parent, title=_('Configuraciones'))
 
 		# Panel principal
@@ -296,6 +305,10 @@ class Settings(wx.Dialog):
 		self.sounds_checkbox= wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
 		self.sounds_checkbox.SetValue(sounds)
 
+		# Checkbox para activar la numeración de los elementos de la lista
+		self.number_checkbox= wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
+		self.number_checkbox.SetValue(number)
+
 		# Botones Guardar cambios y Cancelar
 		save_button = wx.Button(panel, label='Guardar cambios')
 		cancel_button = wx.Button(panel, label='Cancelar')
@@ -305,6 +318,7 @@ class Settings(wx.Dialog):
 		# Sizer para organizar los elementos
 		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(self.sounds_checkbox, 0, wx.ALL, 10)
+		sizer.Add(self.number_checkbox, 0, wx.ALL, 10)
 		sizer.Add(max_elements_label, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 		sizer.Add(self.max_elements_listbox, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 		sizer.Add(save_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
@@ -316,7 +330,8 @@ class Settings(wx.Dialog):
 	def onSave(self, event):
 		sounds= self.sounds_checkbox.GetValue()
 		max_elements= int(self.max_elements_listbox.GetStringSelection())
-		cursor.execute('UPDATE settings SET sounds=?, max_elements=?', (sounds, max_elements))
+		number= self.number_checkbox.GetValue()
+		cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
 		connect.commit()
 		self.Destroy()
 		gui.mainFrame.postPopup()
