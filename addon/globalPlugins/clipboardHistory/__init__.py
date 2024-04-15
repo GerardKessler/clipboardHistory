@@ -1,4 +1,7 @@
-﻿# Código del script clipboard-monitor perteneciente a Héctor Benítez
+﻿# -*- coding: utf-8 -*-
+# Copyright (C) 2021 Gerardo Kessler <ReaperYOtrasYerbas@gmail.com>
+# This file is covered by the GNU General Public License.
+# Código del script clipboard-monitor perteneciente a Héctor Benítez
 
 from nvwave import playWaveFile
 from keyboardHandler import KeyboardInputGesture
@@ -74,9 +77,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			return
 		return globalPluginHandler.GlobalPlugin.getScript(self, gesture)
 
-	def finish(self):
+	def finish(self, sound='close'):
 		self.switch= False
 		self.clearGestureBindings()
+		if self.sounds: self.play(sound)
+
+	def play(self, sound):
+		playWaveFile(os.path.join(dirAddon, 'sounds', '{}.wav'.format(sound)))
 
 	@script(
 		category= 'clipboardHistory',
@@ -93,6 +100,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if len(self.data) < 1:
 			ui.message(_('Historial vacío'))
 			return
+		if self.sounds: self.play('start')
 		self.switch= True
 		self.bindGestures(self.__newGestures)
 		ui.message(_('Historial abierto'))
@@ -111,24 +119,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.x= 0
 		elif key == 'end':
 			self.x= len(self.data)-1
-		if self.sounds: playWaveFile(os.path.join(dirAddon, "sounds", "click.wav"))
+		if self.sounds: self.play('click')
 		self.speak()
 
 	def script_copyItem(self, gesture):
 		api.copyToClip(self.data[self.x][0])
 		ui.message(_('Elemento copiado'))
-		self.finish()
+		self.finish('copy')
 
 	def script_viewItem(self, gesture):
 		ui.browseableMessage(self.data[self.x][0], _('Contenido'))
-		self.finish()
+		self.finish('open')
 		mute(0.1, _('Mostrando el contenido'))
 
 	def script_deleteItem(self, gesture):
 		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.x][0],))
 		connect.commit()
 		self.data.pop(self.x)
-		if self.sounds: playWaveFile(os.path.join(dirAddon, "sounds", "delete.wav"))
+		if self.sounds: self.play('delete')
 		if len(self.data) < 1:
 			ui.message(_('Lista vacía'))
 			self.finish()
@@ -141,7 +149,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_pasteItem(self, gesture):
 		api.copyToClip(self.data[self.x][0])
-		self.finish()
+		self.finish('paste')
 		mute(0.2, _('Pegado'))
 		pressKey(0x11)
 		pressKey(0x56)
@@ -220,6 +228,7 @@ v; Pega el contenido del elemento actual en la ventana con el foco
 f; activa la ventana para buscar elementos en la lista
 f3; avanza a la siguiente coincidencia  del texto buscado
 g; activa la ventana para enfocar el elemento por número de órden
+s; activa la ventana de configuración del complemento
 escape; desactiva la capa de comandos
 		''')
 		ui.browseableMessage(string, _('Lista de comandos'))
