@@ -18,6 +18,7 @@ root_path= globalVars.appArgs.configPath
 import ui
 from scriptHandler import script
 import os
+import shutil
 from .database import *
 from .keyFunc import pressKey, releaseKey
 from .clipboard_monitor import ClipboardMonitor
@@ -293,7 +294,7 @@ class Settings(wx.Dialog):
 		super().__init__(parent, title=_('Configuraciones'))
 
 		# Panel principal
-		panel= wx.Panel(self)
+		panel = wx.Panel(self)
 
 		# StaticText y ListBox para seleccionar el número máximo de cadenas
 		max_elements_label = wx.StaticText(panel, label=_('Selecciona el número máximo de cadenas a guardar en la base de datos. 0 indica sin límite:'))
@@ -302,18 +303,23 @@ class Settings(wx.Dialog):
 		self.max_elements_listbox.SetFocus()
 
 		# Checkbox para activar los sonidos
-		self.sounds_checkbox= wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
+		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
 		self.sounds_checkbox.SetValue(sounds)
 
 		# Checkbox para activar la numeración de los elementos de la lista
-		self.number_checkbox= wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
+		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
 		self.number_checkbox.SetValue(number)
 
-		# Botones Guardar cambios y Cancelar
-		save_button = wx.Button(panel, label='Guardar cambios')
-		cancel_button = wx.Button(panel, label='Cancelar')
+		# Botones Guardar cambios, Cancelar, Exportar base de datos e Importar base de datos
+		export_button = wx.Button(panel, label='&Exportar base de datos')
+		import_button = wx.Button(panel, label='&Importar base de datos')
+		save_button = wx.Button(panel, label='&Guardar cambios')
+		cancel_button = wx.Button(panel, label='&Cancelar')
+
 		save_button.Bind(wx.EVT_BUTTON, self.onSave)
 		cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
+		export_button.Bind(wx.EVT_BUTTON, self.onExport)
+		import_button.Bind(wx.EVT_BUTTON, self.onImport)
 
 		# Sizer para organizar los elementos
 		sizer = wx.BoxSizer(wx.VERTICAL)
@@ -323,14 +329,16 @@ class Settings(wx.Dialog):
 		sizer.Add(self.max_elements_listbox, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 		sizer.Add(save_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
 		sizer.Add(cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+		sizer.Add(export_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+		sizer.Add(import_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
 
 		panel.SetSizer(sizer)
 		sizer.Fit(self)
 
 	def onSave(self, event):
-		sounds= self.sounds_checkbox.GetValue()
-		max_elements= int(self.max_elements_listbox.GetStringSelection())
-		number= self.number_checkbox.GetValue()
+		sounds = self.sounds_checkbox.GetValue()
+		max_elements = int(self.max_elements_listbox.GetStringSelection())
+		number = self.number_checkbox.GetValue()
 		cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
 		connect.commit()
 		self.Destroy()
@@ -339,3 +347,36 @@ class Settings(wx.Dialog):
 	def onCancel(self, event):
 		self.Destroy()
 		gui.mainFrame.postPopup()
+
+	def onExport(self, event):
+		export_dialog= wx.FileDialog(self, _('Exportar base de datos'), '', 'clipboard_history', '', wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+		if export_dialog.ShowModal() == wx.ID_CANCEL: return
+		file_path= export_dialog.GetPath()
+		shutil.copy(os.path.join(root_path, 'clipboard_history'), file_path)
+		mute(0.5, _('Base de datos exportada'))
+		export_dialog.Destroy()
+		self.Destroy()
+
+	def onImport(self, event):
+		import_dialog= wx.FileDialog(self, _('Importar base de datos'), '', '', '', wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+		if import_dialog.ShowModal() == wx.ID_OK:
+			file_path= import_dialog.GetPath()
+			try:
+				cn= sql.connect(file_path)
+			except:
+				mute(0.4, _('Error al intentar acceder a la base de datos de respaldo. El archivo no es válido o está corrupto'))
+				return
+			cr= cn.cursor()
+			cr.execute('SELECT string FROM strings')
+			all= cr.fetchall()
+			cn.close()
+			modal= wx.MessageDialog(None, _('Hay {} elementos en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(all))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+			if modal.ShowModal() == wx.ID_YES:
+				cursor.execute('SELECT string FROM strings')
+				old= cursor.fetchall()
+				all.extend(old)
+				cursor.execute('DELETE FROM strings')
+				cursor.executemany('INSERT INTO strings (string) VALUES (?)', all)
+				connect.commit()
+				self.Destroy()
+				mute(0.5, _('Elementos agregados'))
