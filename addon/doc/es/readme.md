@@ -1,3 +1,0 @@
-# Clipboard History
-
-En construcción
