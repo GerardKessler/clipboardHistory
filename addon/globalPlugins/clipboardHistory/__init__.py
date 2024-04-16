@@ -428,7 +428,7 @@ class Delete(wx.Dialog):
 		if num == len(self.counter):
 			cursor.execute('DELETE FROM strings')
 		else:
-			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id DESC LIMIT ?)', (num,))
+			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
 		connect.commit()
 		mute(0.3, _('{} elementos eliminados'.format(num)))
 		self.Destroy()
