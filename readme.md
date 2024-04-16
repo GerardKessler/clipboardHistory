@@ -41,7 +41,7 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 
 * e; verbaliza el número de índice del elemento actual, y el número total de la lista
 * s; muestra el  diálogo de configuración del complemento
-z; muestra el diálogo de eliminación de elementos de la lista
+* z; muestra el diálogo de eliminación de elementos de la lista
 * escape; desactiva la capa de comandos
 
 ## Búsqueda de elementos
