@@ -125,7 +125,7 @@ class Settings(wx.Dialog):
 						cursor.execute('DELETE FROM strings')
 						cursor.executemany('INSERT INTO strings (string) VALUES (?)', unique_strings)
 						connect.commit()
-						mute(0.5, _('{} elementos agregados'.format(len(unique_strings))))
+						mute(0.5, _('{} elementos agregados'.format(len(unique_strings) - len(existing_strings))))
 				else:
 					mute(0.3, _('No hay elementos únicos para agregar'))
 			except sql.DatabaseError as e:
