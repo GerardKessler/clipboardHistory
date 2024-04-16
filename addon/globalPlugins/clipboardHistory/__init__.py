@@ -292,23 +292,27 @@ escape; desactiva la capa de comandos
 class Settings(wx.Dialog):
 	def __init__(self, parent, sounds, max_elements, number):
 		super().__init__(parent, title=_('Configuraciones'))
-
+		
+		self.sounds= sounds
+		self.max_elements= max_elements
+		self.number= number
+		
 		# Panel principal
 		panel = wx.Panel(self)
 
 		# StaticText y ListBox para seleccionar el número máximo de cadenas
 		max_elements_label = wx.StaticText(panel, label=_('Selecciona el número máximo de cadenas a guardar en la base de datos. 0 indica sin límite:'))
 		self.max_elements_listbox = wx.ListBox(panel, choices=['0', '250', '500', '1000', '2000', '5000'])
-		self.max_elements_listbox.SetStringSelection(str(max_elements))
+		self.max_elements_listbox.SetStringSelection(str(self.max_elements))
 		self.max_elements_listbox.SetFocus()
 
 		# Checkbox para activar los sonidos
 		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
-		self.sounds_checkbox.SetValue(sounds)
+		self.sounds_checkbox.SetValue(self.sounds)
 
 		# Checkbox para activar la numeración de los elementos de la lista
 		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
-		self.number_checkbox.SetValue(number)
+		self.number_checkbox.SetValue(self.number)
 
 		# Botones Guardar cambios, Cancelar, Exportar base de datos e Importar base de datos
 		export_button = wx.Button(panel, label='&Exportar base de datos')
@@ -339,8 +343,12 @@ class Settings(wx.Dialog):
 		sounds = self.sounds_checkbox.GetValue()
 		max_elements = int(self.max_elements_listbox.GetStringSelection())
 		number = self.number_checkbox.GetValue()
-		cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
-		connect.commit()
+		if sounds == self.sounds and max_elements == self.max_elements and number == self.number:
+			mute(0.3, _('Sin cambios en la configuración'))
+		else:
+			cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
+			connect.commit()
+			mute(0.3, _('Cambios guardados correctamente'))
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
