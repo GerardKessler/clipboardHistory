@@ -44,6 +44,12 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 z; muestra el diálogo de eliminación de elementos de la lista
 * escape; desactiva la capa de comandos
 
+## Búsqueda de elementos
+
+Para buscar algún texto del historial por palabras, tan solo hay que pulsar la letra f con la capa de comandos activa.
+Esto abre el diálogo de búsqueda donde podremos escribir alguna palabra o frase, y al pulsar intro se realiza la función.
+Si se encuentra un resultado se verbaliza el texto y su número de orden. Si pulsamos f3, se vuelve a realizar la búsqueda con el mismo contenido, avanzando hasta el siguiente resultado en el caso de encontrar otra coincidencia.
+
 ## Ventana de configuración
 
 Al pulsar la letra s con la capa de comandos activa se muestra la interfaz de configuración.
