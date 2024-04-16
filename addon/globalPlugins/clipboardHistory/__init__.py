@@ -208,16 +208,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_historyDelete(self, gesture):
 		self.finish()
-		wx.CallAfter(self.startHistoryDelete)
-
-	def startHistoryDelete(self):
-		modal= wx.MessageDialog(None, _('¿Seguro que quieres eliminar el historial del portapapeles?'), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
-		if modal.ShowModal() == wx.ID_YES:
-			cursor.execute('DELETE FROM strings')
-			connect.commit()
-			speech.cancelSpeech()
-			speech.speakMessage(_('Historial eliminado de la base de datos'))
-			killSpeak(0.3)
+		self.delete_dialog= Delete(gui.mainFrame)
+		gui.mainFrame.prePopup()
+		self.delete_dialog.Show()
 
 	def script_commandList(self, gesture):
 		self.finish()
@@ -234,7 +227,8 @@ f; activa la ventana para buscar elementos en la lista
 f3; avanza a la siguiente coincidencia  del texto buscado
 g; activa la ventana para enfocar el elemento por número de órden
 e; verbaliza el número de índice del elemento actual, y el número total de la lista
-s; activa la ventana de configuración del complemento
+s; activa el diálogo de configuración del complemento
+z; activa el diálogo para la eliminación de elementos de la lista
 escape; desactiva la capa de comandos
 		''')
 		ui.browseableMessage(string, _('Lista de comandos'))
@@ -401,3 +395,45 @@ class Settings(wx.Dialog):
 				if 'cn' in locals() and cn:
 					cn.close()
 			self.Destroy()
+
+class Delete(wx.Dialog):
+	def __init__(self, parent):
+		super().__init__(parent, title=_('Eliminar elementos'))
+		
+		cursor.execute('SELECT id FROM strings')
+		self.counter= cursor.fetchall()
+		
+		panel= wx.Panel(self)
+
+		static_text= wx.StaticText(panel, label=_('Selecciona el número de elementos a eliminar'))
+		self.split_ctrl= wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
+		
+		delete_button = wx.Button(panel, label=_('&Eliminar'))
+		cancel_button = wx.Button(panel, label=_('&Cancelar'))
+
+		sizer = wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(static_text, 0, wx.ALL, 10)
+		sizer.Add(self.split_ctrl, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+		sizer.Add(delete_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
+		sizer.Add(cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+
+		panel.SetSizer(sizer)
+		sizer.Fit(self)
+
+		delete_button.Bind(wx.EVT_BUTTON, self.onDelete)
+		cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
+
+	def onDelete(self, event):
+		num= self.split_ctrl.GetValue()
+		if num == len(self.counter):
+			cursor.execute('DELETE FROM strings')
+		else:
+			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id DESC LIMIT ?)', (num,))
+		connect.commit()
+		mute(0.3, _('{} elementos eliminados'.format(num)))
+		self.Destroy()
+
+
+	def onCancel(self, event):
+		self.Destroy()
+		gui.mainFrame.postPopup()

@@ -40,8 +40,8 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 ### Otras funcionalidades
 
 * e; verbaliza el número de índice del elemento actual, y el número total de la lista
-* s; activa la ventana de configuración del complemento
-z; elimina todo el historial de la base de datos
+* s; muestra el  diálogo de configuración del complemento
+z; muestra el diálogo de eliminación de elementos de la lista
 * escape; desactiva la capa de comandos
 
 ## Ventana de configuración
