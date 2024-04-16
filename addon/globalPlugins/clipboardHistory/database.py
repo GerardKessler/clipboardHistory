@@ -20,6 +20,7 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	cursor= connect.cursor()
 	cursor.execute('CREATE TABLE strings (string TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
 	cursor.execute('CREATE TABLE settings (sounds BOOLEAN, max_elements INTEGER, number BOOLEAN)')
+	cursor.execute('INSERT INTO strings (string) VALUES ("Texto de prueba")')
 	cursor.execute('INSERT INTO settings (sounds, max_elements, number) VALUES (1, 250, 1)')
 	connect.commit()
 	cursor.execute('VACUUM')
