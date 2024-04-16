@@ -371,20 +371,33 @@ class Settings(wx.Dialog):
 			file_path= import_dialog.GetPath()
 			try:
 				cn= sql.connect(file_path)
-			except:
-				mute(0.4, _('Error al intentar acceder a la base de datos de respaldo. El archivo no es válido o está corrupto'))
-				return
-			cr= cn.cursor()
-			cr.execute('SELECT string FROM strings')
-			all= cr.fetchall()
-			cn.close()
-			modal= wx.MessageDialog(None, _('Hay {} elementos en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(all))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
-			if modal.ShowModal() == wx.ID_YES:
+				cr= cn.cursor()
+				cr.execute('SELECT string FROM strings')
+				imported_strings= cr.fetchall()
+				cn.close()
+				
 				cursor.execute('SELECT string FROM strings')
-				old= cursor.fetchall()
-				all.extend(old)
-				cursor.execute('DELETE FROM strings')
-				cursor.executemany('INSERT INTO strings (string) VALUES (?)', all)
-				connect.commit()
-				self.Destroy()
-				mute(0.5, _('Elementos agregados'))
+				existing_strings= cursor.fetchall()
+				existing_set= set(existing_strings)
+				
+				# Filtramos las cadenas importadas para incluir solo las que no están en la base de datos actual
+				unique_strings= [s for s in imported_strings if s not in existing_set]
+				
+				if len(unique_strings) > 0:
+					modal = wx.MessageDialog(None, _('Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(unique_strings))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+					if modal.ShowModal() == wx.ID_YES:
+						unique_strings.extend(existing_strings)
+						cursor.execute('DELETE FROM strings')
+						cursor.executemany('INSERT INTO strings (string) VALUES (?)', unique_strings)
+						connect.commit()
+						mute(0.5, _('{} elementos agregados'.format(len(unique_strings))))
+				else:
+					mute(0.3, _('No hay elementos únicos para agregar'))
+			except sql.DatabaseError as e:
+				mute(0.4, _('Error al intentar acceder a la base de datos de respaldo. El archivo no es válido o está corrupto'))
+			except Exception as e:
+				mute(0.4, _('Error inesperado: {}').format(str(e)))
+			finally:
+				if 'cn' in locals() and cn:
+					cn.close()
+			self.Destroy()
