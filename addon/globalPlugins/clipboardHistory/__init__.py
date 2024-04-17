@@ -38,6 +38,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.search_text= None
 		self.x= 0
 		self.switch= False
+		self.dialogs= False
 		self.monitor= None
 		self.sounds= None
 		self.max_elements= None
@@ -79,6 +80,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gesture= None
 	)
 	def script_viewData(self, gesture):
+		if self.switch or self.dialogs: return
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
 		cursor.execute('SELECT sounds, max_elements, number FROM settings')
@@ -193,7 +195,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_historyDelete(self, gesture):
 		self.finish()
-		self.delete_dialog= Delete(gui.mainFrame)
+		self.delete_dialog= Delete(gui.mainFrame, self)
 		gui.mainFrame.prePopup()
 		self.delete_dialog.Show()
 
@@ -237,8 +239,8 @@ escape; desactiva la capa de comandos
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_settings(self, gesture):
-		self.finish()
-		self.settings_dialog= Settings(gui.mainFrame, self.sounds, self.max_elements, self.number)
+		self.finish('open')
+		self.settings_dialog= Settings(gui.mainFrame, self, self.sounds, self.max_elements, self.number)
 		gui.mainFrame.prePopup()
 		self.settings_dialog.Show()
 

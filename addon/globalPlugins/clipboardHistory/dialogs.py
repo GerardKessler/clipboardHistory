@@ -25,9 +25,11 @@ def killSpeak(time):
 	speech.setSpeechMode(speech.SpeechMode.talk)
 
 class Settings(wx.Dialog):
-	def __init__(self, parent, sounds, max_elements, number):
+	def __init__(self, parent, frame, sounds, max_elements, number):
 		super().__init__(parent, title=_('Configuraciones'))
 		
+		self.frame= frame
+		self.frame.dialogs= True
 		self.sounds= sounds
 		self.max_elements= max_elements
 		self.number= number
@@ -93,6 +95,7 @@ class Settings(wx.Dialog):
 			cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
 			connect.commit()
 			mute(0.3, _('Cambios guardados correctamente'))
+		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
@@ -109,6 +112,7 @@ class Settings(wx.Dialog):
 			event.Skip()
 
 	def onCancel(self, event):
+		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
@@ -119,6 +123,7 @@ class Settings(wx.Dialog):
 		shutil.copy(os.path.join(root_path, 'clipboard_history'), file_path)
 		mute(0.5, _('Base de datos exportada'))
 		export_dialog.Destroy()
+		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
@@ -157,12 +162,16 @@ class Settings(wx.Dialog):
 			finally:
 				if 'cn' in locals() and cn:
 					cn.close()
+			self.frame.dialogs= False
 			self.Destroy()
 			gui.mainFrame.postPopup()
 
 class Delete(wx.Dialog):
-	def __init__(self, parent):
+	def __init__(self, parent, frame):
 		super().__init__(parent, title=_('Eliminar elementos'))
+		
+		self.frame= frame
+		self.frame.dialogs= True
 		
 		cursor.execute('SELECT id FROM strings')
 		self.counter= cursor.fetchall()
@@ -213,6 +222,7 @@ class Delete(wx.Dialog):
 			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
 		connect.commit()
 		mute(0.3, _('{} elementos eliminados'.format(num)))
+		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
@@ -229,5 +239,6 @@ class Delete(wx.Dialog):
 			event.Skip()
 
 	def onCancel(self, event):
+		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
