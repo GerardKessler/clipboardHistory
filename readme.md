@@ -12,7 +12,6 @@ También se crea un escuchador (listener) para capturar los cambios del portapap
 El historial no guarda duplicaciones para evitar un crecimiento innecesario de la base de datos. al copiar un texto existente, este se copia en la primera posición de la lista eliminando la anterior.
 
 Para utilizar este complemento es necesario asignar un atajo a la función de activación de la capa de comandos en la configuración de los gestos de entrada, apartado clipboardHistory.
-Este comando tiene doble función. Al pulsarse 2 veces rápidamente se abren las configuraciones del complemento, y con una sola pulsación se activa la capa de comandos.
 
 ## Uso
 
