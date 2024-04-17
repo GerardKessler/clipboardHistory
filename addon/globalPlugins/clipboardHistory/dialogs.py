@@ -35,44 +35,53 @@ class Settings(wx.Dialog):
 		# Panel principal
 		panel = wx.Panel(self)
 
-		# StaticText y ListBox para seleccionar el número máximo de cadenas
+		# Creación de controles
 		max_elements_label = wx.StaticText(panel, label=_('Selecciona el número máximo de cadenas a guardar en la base de datos. 0 indica sin límite:'))
 		self.max_elements_listbox = wx.ListBox(panel, choices=['0', '250', '500', '1000', '2000', '5000'])
 		self.max_elements_listbox.SetStringSelection(str(self.max_elements))
 		self.max_elements_listbox.SetFocus()
 
-		# Checkbox para activar los sonidos
 		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
 		self.sounds_checkbox.SetValue(self.sounds)
 
-		# Checkbox para activar la numeración de los elementos de la lista
 		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
 		self.number_checkbox.SetValue(self.number)
 
-		# Botones Guardar cambios, Cancelar, Exportar base de datos e Importar base de datos
 		export_button = wx.Button(panel, label='&Exportar base de datos')
 		import_button = wx.Button(panel, label='&Importar base de datos')
 		save_button = wx.Button(panel, label='&Guardar cambios')
 		cancel_button = wx.Button(panel, label='&Cancelar')
 
+		# Eventos de botones
 		save_button.Bind(wx.EVT_BUTTON, self.onSave)
 		cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
 		export_button.Bind(wx.EVT_BUTTON, self.onExport)
 		import_button.Bind(wx.EVT_BUTTON, self.onImport)
+		# Maneja el cierre con la tecla Escape y otras teclas.
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
 
-		# Sizer para organizar los elementos
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(self.sounds_checkbox, 0, wx.ALL, 10)
-		sizer.Add(self.number_checkbox, 0, wx.ALL, 10)
-		sizer.Add(max_elements_label, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-		sizer.Add(self.max_elements_listbox, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-		sizer.Add(save_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
-		sizer.Add(cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
-		sizer.Add(export_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
-		sizer.Add(import_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+		# Organización con Sizers
+		v_sizer = wx.BoxSizer(wx.VERTICAL)
+		h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-		panel.SetSizer(sizer)
-		sizer.Fit(self)
+		# Añadir controles al sizer vertical
+		v_sizer.Add(max_elements_label, 0, wx.ALL, 10)
+		v_sizer.Add(self.max_elements_listbox, 1, wx.EXPAND | wx.ALL, 10)
+		v_sizer.Add(self.sounds_checkbox, 0, wx.ALL, 10)
+		v_sizer.Add(self.number_checkbox, 0, wx.ALL, 10)
+
+		# Añadir botones al sizer horizontal
+		h_sizer.Add(import_button, 0, wx.ALL, 10)
+		h_sizer.Add(export_button, 0, wx.ALL, 10)
+		h_sizer.Add(save_button, 0, wx.ALL, 10)
+		h_sizer.Add(cancel_button, 0, wx.ALL, 10)
+
+		# Añadir el sizer horizontal al vertical
+		v_sizer.Add(h_sizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+
+		panel.SetSizer(v_sizer)
+		v_sizer.Fit(self)
+		self.CenterOnScreen()
 
 	def onSave(self, event):
 		sounds = self.sounds_checkbox.GetValue()
@@ -87,6 +96,18 @@ class Settings(wx.Dialog):
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
+	def onKeyPress(self, event):
+		"""
+		Manejador de eventos para teclas presionadas en el diálogo.
+
+		Args:
+			event: El evento de teclado.
+		"""
+		if event.GetKeyCode() == wx.WXK_ESCAPE:
+			self.onCancel(None)
+		else:
+			event.Skip()
+
 	def onCancel(self, event):
 		self.Destroy()
 		gui.mainFrame.postPopup()
@@ -99,6 +120,7 @@ class Settings(wx.Dialog):
 		mute(0.5, _('Base de datos exportada'))
 		export_dialog.Destroy()
 		self.Destroy()
+		gui.mainFrame.postPopup()
 
 	def onImport(self, event):
 		import_dialog= wx.FileDialog(self, _('Importar base de datos'), '', '', '', wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
@@ -136,6 +158,7 @@ class Settings(wx.Dialog):
 				if 'cn' in locals() and cn:
 					cn.close()
 			self.Destroy()
+			gui.mainFrame.postPopup()
 
 class Delete(wx.Dialog):
 	def __init__(self, parent):
@@ -144,25 +167,43 @@ class Delete(wx.Dialog):
 		cursor.execute('SELECT id FROM strings')
 		self.counter= cursor.fetchall()
 		
-		panel= wx.Panel(self)
+		# Panel principal del diálogo
+		panel = wx.Panel(self)
 
-		static_text= wx.StaticText(panel, label=_('Selecciona el número de elementos a eliminar'))
-		self.split_ctrl= wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
+		# Texto estático que indica la acción
+		static_text = wx.StaticText(panel, label=_('Selecciona el número de elementos a eliminar'))
+
+		# Control para seleccionar el número de elementos a eliminar
+		self.split_ctrl = wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
 		
+		# Botones para eliminar y cancelar
 		delete_button = wx.Button(panel, label=_('&Eliminar'))
 		cancel_button = wx.Button(panel, label=_('&Cancelar'))
 
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(static_text, 0, wx.ALL, 10)
-		sizer.Add(self.split_ctrl, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
-		sizer.Add(delete_button, 0, wx.ALIGN_RIGHT | wx.RIGHT, 10)
-		sizer.Add(cancel_button, 0, wx.ALIGN_RIGHT | wx.RIGHT | wx.BOTTOM, 10)
+		# Sizer principal en vertical
+		main_sizer = wx.BoxSizer(wx.VERTICAL)
+		button_sizer = wx.BoxSizer(wx.HORIZONTAL)  # Sizer horizontal para los botones
 
-		panel.SetSizer(sizer)
-		sizer.Fit(self)
+		# Agrega los elementos al sizer principal
+		main_sizer.Add(static_text, 0, wx.ALL, 10)
+		main_sizer.Add(self.split_ctrl, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+		button_sizer.Add(delete_button, 1, wx.EXPAND | wx.RIGHT, 5)  # Añade el botón con expansión
+		button_sizer.Add(cancel_button, 1, wx.EXPAND | wx.LEFT, 5)   # Añade el botón con expansión
+		
+		# Agrega el sizer de botones al sizer principal
+		main_sizer.Add(button_sizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
 
+		# Configura el sizer en el panel y ajusta el tamaño
+		panel.SetSizer(main_sizer)
+		main_sizer.Fit(self)
+
+		# Vincula eventos de los botones a sus funciones
 		delete_button.Bind(wx.EVT_BUTTON, self.onDelete)
 		cancel_button.Bind(wx.EVT_BUTTON, self.onCancel)
+		# Maneja el cierre con la tecla Escape y otras teclas.
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
+
+		self.CenterOnScreen()
 
 	def onDelete(self, event):
 		num= self.split_ctrl.GetValue()
@@ -173,7 +214,19 @@ class Delete(wx.Dialog):
 		connect.commit()
 		mute(0.3, _('{} elementos eliminados'.format(num)))
 		self.Destroy()
+		gui.mainFrame.postPopup()
 
+	def onKeyPress(self, event):
+		"""
+		Manejador de eventos para teclas presionadas en el diálogo.
+
+		Args:
+			event: El evento de teclado.
+		"""
+		if event.GetKeyCode() == wx.WXK_ESCAPE:
+			self.onCancel(None)
+		else:
+			event.Skip()
 
 	def onCancel(self, event):
 		self.Destroy()
