@@ -4,7 +4,7 @@
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
 from nvwave import playWaveFile
-from threading import Thread
+from threading import Thread, Timer
 from time import sleep
 import gui
 import wx
@@ -39,6 +39,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.x= 0
 		self.switch= False
 		self.dialogs= False
+		self.timer= Timer(0.2, self.main)
 		self.monitor= None
 		self.sounds= None
 		self.max_elements= None
@@ -71,16 +72,24 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if self.sounds: self.play(sound)
 
 	def play(self, sound):
-		playWaveFile(os.path.join(dirAddon, 'sounds', '{}.wav'.format(sound)))
+		if sound: playWaveFile(os.path.join(dirAddon, 'sounds', '{}.wav'.format(sound)))
 
 	@script(
 		category= 'clipboardHistory',
 		# Translators: Descripción del elemento en el diálogo gestos de entrada
-		description= _('Activa la capa de comandos. F1 muestra la lista de atajos'),
+		description= _('Activa la capa de comandos. Doble pulsación rápida muestra el diálogo de configuración'),
 		gesture= None
 	)
 	def script_viewData(self, gesture):
 		if self.switch or self.dialogs: return
+		if self.timer.is_alive():
+			self.timer.cancel()
+			self.script_settings(gesture)
+		else:
+			self.timer.start()
+
+	def main(self):
+		self.timer= Timer(0.2, self.main)
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
 		cursor.execute('SELECT sounds, max_elements, number FROM settings')
@@ -239,7 +248,15 @@ escape; desactiva la capa de comandos
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_settings(self, gesture):
+		self.timer= Timer(0.2, self.main)
 		self.finish('open')
+		if not self.sounds:
+			cursor.execute('SELECT string FROM strings ORDER BY id DESC')
+			self.data= cursor.fetchall()
+			cursor.execute('SELECT sounds, max_elements, number FROM settings')
+			settings= cursor.fetchone()
+			self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
+
 		self.settings_dialog= Settings(gui.mainFrame, self, self.sounds, self.max_elements, self.number)
 		gui.mainFrame.prePopup()
 		self.settings_dialog.Show()

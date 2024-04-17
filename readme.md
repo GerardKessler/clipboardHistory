@@ -11,7 +11,8 @@ Al instalarlo por primera vez e iniciar NVDA, se crea el archivo "clipboard_hist
 También se crea un escuchador (listener) para capturar los cambios del portapapeles, y actualizar la base de datos cuando haya contenido de texto nuevo.
 El historial no guarda duplicaciones para evitar un crecimiento innecesario de la base de datos. al copiar un texto existente, este se copia en la primera posición de la lista eliminando la anterior.
 
-Para utilizar este complemento es necesario asignar un atajo a la función de activación de la capa de comandos en la configuración de los gestos de entrada, apartado clipboardHistory
+Para utilizar este complemento es necesario asignar un atajo a la función de activación de la capa de comandos en la configuración de los gestos de entrada, apartado clipboardHistory.
+Este comando tiene doble función. Al pulsarse 2 veces rápidamente se abren las configuraciones del complemento, y con una sola pulsación se activa la capa de comandos.
 
 ## Uso
 
@@ -39,6 +40,7 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 
 ### Otras funcionalidades
 
+* f1; muestra una ventana de NVDA con la lista de los atajos de la capa de comandos
 * e; verbaliza el número de índice del elemento actual, y el número total de la lista
 * s; muestra el  diálogo de configuración del complemento
 * z; muestra el diálogo de eliminación de elementos de la lista
