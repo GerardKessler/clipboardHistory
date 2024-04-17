@@ -15,7 +15,6 @@ import globalVars
 import ui
 from scriptHandler import script
 import os
-import shutil
 from .database import *
 from .dialogs import *
 from .keyFunc import pressKey, releaseKey
@@ -39,7 +38,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.x= 0
 		self.switch= False
 		self.dialogs= False
-		self.timer= Timer(0.2, self.main)
+		self.timer= Timer(0.150, self.main)
 		self.monitor= None
 		self.sounds= None
 		self.max_elements= None
@@ -89,7 +88,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.timer.start()
 
 	def main(self):
-		self.timer= Timer(0.2, self.main)
+		self.timer= Timer(0.150, self.main)
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
 		self.data= cursor.fetchall()
 		cursor.execute('SELECT sounds, max_elements, number FROM settings')
@@ -248,7 +247,7 @@ escape; desactiva la capa de comandos
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_settings(self, gesture):
-		self.timer= Timer(0.2, self.main)
+		self.timer= Timer(0.150, self.main)
 		self.finish('open')
 		if not self.sounds:
 			cursor.execute('SELECT string FROM strings ORDER BY id DESC')

@@ -3,6 +3,7 @@
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
+import api
 import globalVars
 root_path= globalVars.appArgs.configPath
 import os
@@ -25,7 +26,12 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	cursor= connect.cursor()
 	cursor.execute('CREATE TABLE strings (string TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
 	cursor.execute('CREATE TABLE settings (sounds BOOLEAN, max_elements INTEGER, number BOOLEAN)')
-	cursor.execute('INSERT INTO strings (string) VALUES ("Texto de prueba")')
+	new_content= _('Texto de prueba')
+	try:
+		new_content= api.getClipData()
+	except OSError:
+		pass
+	cursor.execute('INSERT INTO strings (string) VALUES (?)', (new_content,))
 	cursor.execute('INSERT INTO settings (sounds, max_elements, number) VALUES (1, 250, 1)')
 	connect.commit()
 	cursor.execute('VACUUM')

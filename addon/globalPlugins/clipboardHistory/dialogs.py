@@ -3,6 +3,7 @@
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
+import shutil
 import ui
 import gui
 import speech
