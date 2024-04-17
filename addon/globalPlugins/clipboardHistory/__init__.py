@@ -75,7 +75,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		category= 'clipboardHistory',
 		# Translators: Descripción del elemento en el diálogo gestos de entrada
-		description= _('Activa la capa de comandos. Doble pulsación rápida muestra el diálogo de configuración'),
+		description= _('Activa la capa de comandos'),
 		gesture= None
 	)
 	def script_viewData(self, gesture):
