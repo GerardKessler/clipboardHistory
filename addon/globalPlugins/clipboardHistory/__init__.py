@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <ReaperYOtrasYerbas@gmail.com>
+# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -59,11 +59,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if not self.switch: return globalPluginHandler.GlobalPlugin.getScript(self, gesture)
 		script= globalPluginHandler.GlobalPlugin.getScript(self, gesture)
 		if not script:
+			# Translators: Mensaje de historial cerrado
 			mute(0.3, _('Historial Cerrado'))
 			self.finish()
 			return
 		return globalPluginHandler.GlobalPlugin.getScript(self, gesture)
 
+	# método que elimina los gestos asignados, y desactiva la bandera switch
 	def finish(self, sound='close'):
 		self.switch= False
 		self.clearGestureBindings()
@@ -86,11 +88,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		settings= cursor.fetchone()
 		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
 		if len(self.data) < 1:
+			# Translators: Mensaje de historial vacío
 			ui.message(_('Historial vacío'))
 			return
 		if self.sounds: self.play('start')
 		self.switch= True
 		self.bindGestures(self.__newGestures)
+		# Translators: Aviso de historial abierto
 		ui.message(_('Historial abierto'))
 
 	def script_items(self, gesture):
@@ -112,12 +116,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_copyItem(self, gesture):
 		api.copyToClip(self.data[self.x][0])
+		# Translators: Mensaje de elemento copiado
 		ui.message(_('Elemento copiado'))
 		self.finish('copy')
 
 	def script_viewItem(self, gesture):
+		# Translators: Título de la ventana con el contenido
 		ui.browseableMessage(self.data[self.x][0], _('Contenido'))
 		self.finish('open')
+		# Translators: Mensaje que avisa que se está mostrando el contenido
 		mute(0.1, _('Mostrando el contenido'))
 
 	def script_deleteItem(self, gesture):
@@ -126,6 +133,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.data.pop(self.x)
 		if self.sounds: self.play('delete')
 		if len(self.data) < 1:
+			# Translators: Mensaje de aviso de lista vacía
 			ui.message(_('Lista vacía'))
 			self.finish()
 			return
@@ -141,6 +149,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	def script_pasteItem(self, gesture):
 		api.copyToClip(self.data[self.x][0])
 		self.finish('paste')
+		# Translators: Aviso de mensaje pegado
 		mute(0.2, _('Pegado'))
 		pressKey(0x11)
 		pressKey(0x56)
@@ -151,7 +160,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
+			# Translators: Etiqueta del campo para ingresar el texto de búsqueda
 			_('Escriba la búsqueda y pulse intro'),
+			# Translators: Texto del título del buscador
 			_('Buscador')
 		)
 		def callback(result):
@@ -165,10 +176,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def startSearch(self):
 		if self.search_text is None:
+			# Translators: Aviso de texto de búsqueda inexistente
 			ui.message(_('Sin texto de búsqueda'))
 			return
 
-		# Intentar encontrar la coincidencia comenzando desde el siguiente elemento
 		for i in range(self.x + 1, len(self.data)):
 			if self.search_text.lower() in self.data[i][0].lower():
 				self.x = i
@@ -176,7 +187,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				self.bindGestures(self.__newGestures)
 				return
 
-		# Si no se encuentra, busca desde el comienzo hasta el elemento actual
 		for i in range(0, self.x + 1):
 			if self.search_text.lower() in self.data[i][0].lower():
 				self.x = i
@@ -184,11 +194,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				self.bindGestures(self.__newGestures)
 				return
 
-		# Si no se encuentra nada después de buscar todo el rango
+		# Translators: Mensaje de aviso para cuando no se encuentran resultados de búsqueda
 		mute(0.2, _('Sin resultados'))
 		self.bindGestures(self.__newGestures)
 
 	def script_close(self, gesture):
+		# Translators: Mensaje de historial cerrado
 		mute(0.3, _('Historial cerrado'))
 		self.finish()
 
@@ -200,6 +211,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_commandList(self, gesture):
 		self.finish()
+		# Translators: Texto de ayuda con la lista de comandos
 		string= _('''
 Flecha arriba; anterior elemento de la lista
 Flecha abajo; siguiente elemento de la lista
@@ -217,13 +229,16 @@ s; activa el diálogo de configuración del complemento
 z; activa el diálogo para la eliminación de elementos de la lista
 escape; desactiva la capa de comandos
 		''')
+		# Translators: Título de la ventana con la lista de comandos
 		ui.browseableMessage(string, _('Lista de comandos'))
 
 	def script_indexSearch(self, gesture):
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
+			# Translators: Etiqueta del campo para ingresar un número
 			_('Escriba el número y pulse intro'),
+			# Translators: Título de la ventana  con la cantidad de elementos en el historial
 			_('Hay {} elementos en el historial'.format(len(self.data)))
 		)
 		def callback(result):
@@ -234,6 +249,7 @@ escape; desactiva la capa de comandos
 					mute(0.5, f'{index}; {self.data[self.x][0]}')
 					self.bindGestures(self.__newGestures)
 				else:
+					# Translators: Mensaje de aviso para datos incorrectos o número fuera de rango
 					mute(0.3, _('Dato incorrecto o fuera de rango'))
 		gui.runScriptModalDialog(get_search, callback)
 
@@ -244,6 +260,7 @@ escape; desactiva la capa de comandos
 		self.settings_dialog.Show()
 
 	def script_indexAnnounce(self, gesture):
+		# Translators: Mensaje de aviso de índice del elemento y total del historial
 		ui.message(f'{self.x+1} de {len(self.data)}')
 
 	def terminate(self):
