@@ -23,10 +23,10 @@ addon_info = {
 	"addon_summary": _("clipboardHistory"),
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-	"addon_description": _("""Módulo global que guarda el historial del portapapeles de Windows en una base de datos local, permitiendo gestionarla a través de una interfaz invisible.
+	"addon_description": _("""Módulo global que guarda el historial del portapapeles de Windows en una base de datos local, permitiendo la persistencia y la gestión a través de una interfaz invisible.
 	Permite buscar entre los elementos guardados, recuperarlos, eliminarlos, mostrarlos en un cuadro editable, y pegarlos en el foco actual."""),
 	# version
-	"addon_version": "1.0.0",
+	"addon_version": "1.0",
 	# Author(s)
 	"addon_author": "Gerardo Kessler <gera.ar@yahoo.com>",
 	# URL for the add-on documentation support
@@ -57,7 +57,7 @@ addon_info = {
 # pythonSources = ["addon/globalPlugins/*.py"]
 # For more information on SCons Glob expressions please take a look at:
 # https://scons.org/doc/production/HTML/scons-user/apd.html
-pythonSources = ["addon/globalPlugins/clipboardHistory/__init__.py"]
+pythonSources = ["addon/globalPlugins/clipboardHistory/*.py"]
 
 # Files that contain strings for translation. Usually your python sources
 i18nSources = pythonSources + ["buildVars.py"]

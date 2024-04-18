@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <ReaperYOtrasYerbas@gmail.com>
+# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -26,6 +26,7 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	cursor= connect.cursor()
 	cursor.execute('CREATE TABLE strings (string TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
 	cursor.execute('CREATE TABLE settings (sounds BOOLEAN, max_elements INTEGER, number BOOLEAN)')
+	# Translators: Cadena para la base de datos inicial con un texto de prueba
 	new_content= _('Texto de prueba')
 	try:
 		new_content= api.getClipData()

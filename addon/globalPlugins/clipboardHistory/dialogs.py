@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <ReaperYOtrasYerbas@gmail.com>
+# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -20,6 +20,7 @@ def mute(time, msg= False):
 	Thread(target=killSpeak, args=(time,), daemon= True).start()
 
 def killSpeak(time):
+	# Si el modo de voz no es talk, se cancela el proceso para evitar modificaciones en otros modos de voz
 	if speech.getState().speechMode != speech.SpeechMode.talk: return
 	speech.setSpeechMode(speech.SpeechMode.off)
 	sleep(time)
@@ -27,6 +28,7 @@ def killSpeak(time):
 
 class Settings(wx.Dialog):
 	def __init__(self, parent, frame, sounds, max_elements, number):
+		# Translators: Título del diálogo de configuraciones
 		super().__init__(parent, title=_('Configuraciones'))
 		
 		self.frame= frame
@@ -39,20 +41,27 @@ class Settings(wx.Dialog):
 		panel = wx.Panel(self)
 
 		# Creación de controles
+		# Etiqueta del texto estático para seleccionar el número de cadenas máximo a guardar en la base de datos
 		max_elements_label = wx.StaticText(panel, label=_('Selecciona el número máximo de cadenas a guardar en la base de datos. 0 indica sin límite:'))
 		self.max_elements_listbox = wx.ListBox(panel, choices=['0', '250', '500', '1000', '2000', '5000'])
 		self.max_elements_listbox.SetStringSelection(str(self.max_elements))
 		self.max_elements_listbox.SetFocus()
 
+		# Translators: Texto de la casilla de verificación para la activación de los sonidos
 		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
 		self.sounds_checkbox.SetValue(self.sounds)
 
+		# Translators: Texto de la casilla de verificación para la verbalización de los números de índice de los elementos de la lista
 		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
 		self.number_checkbox.SetValue(self.number)
 
+		# Translators: Etiqueta del botón para exportar la base de datos
 		export_button = wx.Button(panel, label='&Exportar base de datos')
+		# Translators: Etiqueta del botón para importar una base de datos
 		import_button = wx.Button(panel, label='&Importar base de datos')
+		# Translators: Texto del botón para guardar los cambios
 		save_button = wx.Button(panel, label='&Guardar cambios')
+		# Translators: Texto del botón cancelar
 		cancel_button = wx.Button(panel, label='&Cancelar')
 
 		# Eventos de botones
@@ -91,10 +100,12 @@ class Settings(wx.Dialog):
 		max_elements = int(self.max_elements_listbox.GetStringSelection())
 		number = self.number_checkbox.GetValue()
 		if sounds == self.sounds and max_elements == self.max_elements and number == self.number:
+			# Translators: Mensaje de aviso que indica que no hubo cambios
 			mute(0.3, _('Sin cambios en la configuración'))
 		else:
 			cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
 			connect.commit()
+			# Translators: Mensaje de aviso de cambios guardados correctamente
 			mute(0.3, _('Cambios guardados correctamente'))
 		self.frame.dialogs= False
 		self.Destroy()
@@ -118,17 +129,20 @@ class Settings(wx.Dialog):
 		gui.mainFrame.postPopup()
 
 	def onExport(self, event):
+		# Translators: Título del diálogo de exportación
 		export_dialog= wx.FileDialog(self, _('Exportar base de datos'), '', 'clipboard_history', '', wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
 		if export_dialog.ShowModal() == wx.ID_CANCEL: return
 		file_path= export_dialog.GetPath()
 		shutil.copy(os.path.join(root_path, 'clipboard_history'), file_path)
-		mute(0.5, _('Base de datos exportada'))
+		# Translators: Aviso de base de datos exportada
+		mute(0.5, _('Base de datos exportada correctamente'))
 		export_dialog.Destroy()
 		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
 
 	def onImport(self, event):
+		# Translators: Título del diálogo de importación
 		import_dialog= wx.FileDialog(self, _('Importar base de datos'), '', '', '', wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 		if import_dialog.ShowModal() == wx.ID_OK:
 			file_path= import_dialog.GetPath()
@@ -147,18 +161,23 @@ class Settings(wx.Dialog):
 				unique_strings= [s for s in imported_strings if s not in existing_set]
 				
 				if len(unique_strings) > 0:
+					# Translators: Texto del diálogo que indica la cantidad de elementos nuevos y pregunta por el añadido a la base de datos
 					modal = wx.MessageDialog(None, _('Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(unique_strings))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 					if modal.ShowModal() == wx.ID_YES:
 						unique_strings.extend(existing_strings)
 						cursor.execute('DELETE FROM strings')
 						cursor.executemany('INSERT INTO strings (string) VALUES (?)', unique_strings)
 						connect.commit()
+						# Translators: Mensaje de aviso de los elementos agregados
 						mute(0.5, _('{} elementos agregados'.format(len(unique_strings) - len(existing_strings))))
 				else:
-					mute(0.3, _('No hay elementos únicos para agregar'))
+					# Translators: Mensaje de aviso que indica que no hay nuevos elementos para añadir
+					mute(0.3, _('No hay nuevos elementos para agregar'))
 			except sql.DatabaseError as e:
+				# Translators: Mensaje de aviso que indica que no se pudo acceder a la base de datos
 				mute(0.4, _('Error al intentar acceder a la base de datos de respaldo. El archivo no es válido o está corrupto'))
 			except Exception as e:
+				# Translators: Mensaje que avisa de un error inesperado
 				mute(0.4, _('Error inesperado: {}').format(str(e)))
 			finally:
 				if 'cn' in locals() and cn:
@@ -180,14 +199,16 @@ class Delete(wx.Dialog):
 		# Panel principal del diálogo
 		panel = wx.Panel(self)
 
-		# Texto estático que indica la acción
+		# Translators: Etiqueta del texto estático para el número de elementos a eliminar
 		static_text = wx.StaticText(panel, label=_('Selecciona el número de elementos a eliminar'))
 
 		# Control para seleccionar el número de elementos a eliminar
 		self.split_ctrl = wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
 		
 		# Botones para eliminar y cancelar
+		# Translators: Etiqueta del botón eliminar
 		delete_button = wx.Button(panel, label=_('&Eliminar'))
+		# Translators: Etiqueta del botón cancelar
 		cancel_button = wx.Button(panel, label=_('&Cancelar'))
 
 		# Sizer principal en vertical
@@ -222,6 +243,7 @@ class Delete(wx.Dialog):
 		else:
 			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
 		connect.commit()
+		# Translators: Mensaje de aviso de los elementos eliminados
 		mute(0.3, _('{} elementos eliminados'.format(num)))
 		self.frame.dialogs= False
 		self.Destroy()

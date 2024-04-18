@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <ReaperYOtrasYerbas@gmail.com>
+# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
