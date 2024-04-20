@@ -166,7 +166,7 @@ class Settings(wx.Dialog):
 					if modal.ShowModal() == wx.ID_YES:
 						unique_strings.extend(existing_strings)
 						cursor.execute('DELETE FROM strings')
-						cursor.executemany('INSERT INTO strings (string) VALUES (?)', unique_strings)
+						cursor.executemany('INSERT INTO strings (string, favorite) VALUES (?, 0)', unique_strings)
 						connect.commit()
 						# Translators: Mensaje de aviso de los elementos agregados
 						mute(0.5, _('{} elementos agregados'.format(len(unique_strings) - len(existing_strings))))

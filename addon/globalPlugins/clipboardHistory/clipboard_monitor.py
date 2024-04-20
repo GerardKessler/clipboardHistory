@@ -80,7 +80,7 @@ class ClipboardMonitor:
 			else:
 				cursor.execute('DELETE FROM strings WHERE string=?', (content,))
 				connect.commit()
-				cursor.execute('INSERT INTO strings (string) VALUES (?)', (content,))
+				cursor.execute('INSERT INTO strings (string, favorite) VALUES (?, ?)', (content, 0))
 				connect.commit()
 				cursor.execute('SELECT id FROM strings')
 				counter= cursor.fetchall()

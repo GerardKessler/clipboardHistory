@@ -32,11 +32,15 @@ def disableInSecureMode(decoratedCls):
 
 @disableInSecureMode
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+
+	# Translators: Mensaje de lista vacía
+	empty= _('Lista vacía')
 	def __init__(self, *args, **kwargs):
 		super(GlobalPlugin, self).__init__(*args, **kwargs)
 		self.data= []
-		self.search_text= None
 		self.x= 0
+		self.y= 0
+		self.search_text= None
 		self.switch= False
 		self.dialogs= False
 		self.monitor= None
@@ -83,15 +87,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_viewData(self, gesture):
 		if self.switch or self.dialogs: return
-		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
-		self.data= cursor.fetchall()
+		cursor.execute('SELECT string, favorite FROM strings ORDER BY id DESC')
+		data= cursor.fetchall()
+		self.data= [data, [e for e in data if e[1] == 1]]
 		cursor.execute('SELECT sounds, max_elements, number FROM settings')
 		settings= cursor.fetchone()
 		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
-		if len(self.data) < 1:
-			# Translators: Mensaje de historial vacío
-			ui.message(_('Historial vacío'))
-			return
 		if self.sounds: self.play('start')
 		self.switch= True
 		self.bindGestures(self.__newGestures)
@@ -99,43 +100,48 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		ui.message(_('Historial abierto'))
 
 	def script_items(self, gesture):
+		if len(self.data[self.y]) < 1:
+			ui.message(self.empty)
+			return
 		key= gesture.mainKeyName
 		if key == 'downArrow':
 			self.x+=1
-			if self.x >= len(self.data):
+			if self.x >= len(self.data[self.y]):
 				self.x= 0
 		elif key == 'upArrow':
 			self.x-=1
 			if self.x < 0:
-				self.x= len(self.data)-1
+				self.x= len(self.data[self.y])-1
 		elif key == 'home':
 			self.x= 0
 		elif key == 'end':
-			self.x= len(self.data)-1
+			self.x= len(self.data[self.y])-1
 		if self.sounds: self.play('click')
 		self.speak()
 
 	def script_copyItem(self, gesture):
-		api.copyToClip(self.data[self.x][0])
+		if len(self.data[self.y]) < 1: return
+		api.copyToClip(self.data[self.y][self.x][0])
 		# Translators: Mensaje de elemento copiado
 		ui.message(_('Elemento copiado'))
 		self.finish('copy')
 
 	def script_viewItem(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		# Translators: Título de la ventana con el contenido
-		ui.browseableMessage(self.data[self.x][0], _('Contenido'))
+		ui.browseableMessage(self.data[self.y][self.x][0], _('Contenido'))
 		self.finish('open')
 		# Translators: Mensaje que avisa que se está mostrando el contenido
 		mute(0.1, _('Mostrando el contenido'))
 
 	def script_deleteItem(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.x][0],))
 		connect.commit()
 		self.data.pop(self.x)
 		if self.sounds: self.play('delete')
 		if len(self.data) < 1:
-			# Translators: Mensaje de aviso de lista vacía
-			ui.message(_('Lista vacía'))
+			ui.message(self.empty)
 			self.finish()
 			return
 		if self.x == len(self.data): self.x-=1
@@ -143,11 +149,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def speak(self):
 		if self.number:
-			ui.message(f'{self.x+1}; {self.data[self.x][0]}')
+			ui.message(f'{self.x+1}; {self.data[self.y][self.x][0]}')
 		else:
-			ui.message(self.data[self.x][0])
+			ui.message(self.data[self.y][self.x][0])
 
 	def script_pasteItem(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		api.copyToClip(self.data[self.x][0])
 		self.finish('paste')
 		# Translators: Aviso de mensaje pegado
@@ -158,6 +165,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		releaseKey(0x11)
 
 	def script_findItem(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
@@ -173,6 +181,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_searchNextItem(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		self.startSearch()
 
 	def startSearch(self):
@@ -205,6 +214,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.finish()
 
 	def script_historyDelete(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		self.finish()
 		self.delete_dialog= Delete(gui.mainFrame, self)
 		gui.mainFrame.prePopup()
@@ -235,6 +245,7 @@ escape; desactiva la capa de comandos
 		ui.browseableMessage(string, _('Lista de comandos'))
 
 	def script_indexSearch(self, gesture):
+		if len(self.data[self.y]) < 1: return
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
@@ -262,11 +273,19 @@ escape; desactiva la capa de comandos
 		self.settings_dialog.Show()
 
 	def script_indexAnnounce(self, gesture):
-		# Translators: Mensaje de aviso de índice del elemento y total del historial
-		ui.message(f'{self.x+1} de {len(self.data)}')
+		if len(self.data[self.y]) < 1:
+			ui.message(self.empty)
+			return
+		# Translators: Mensaje de aviso de índice del elemento  total del historial
+		msg= _('{} de {}'.format(self.x+1, len(self.data[self.y])))
+		if self.y == 0 and self.data[self.y][self.x][1] == 1:
+			# Translators: texto favorito
+			msg= msg + _(' (favorito)')
+		ui.message(msg)
 
 	def script_counter(self, gesture):
-		str= self.data[self.x][0]
+		if len(self.data[self.y]) < 1: return
+		str= self.data[self.y][self.x][0]
 		counter_func= lambda x: len(findall(x, str))
 		chars= counter_func(r'[^\s]')
 		spaces= counter_func(r'[ ^\s]')
@@ -274,6 +293,16 @@ escape; desactiva la capa de comandos
 		lines= len(str.splitlines())
 		# Translators: Formateo del mensaje donde se especifica el número de caracteres, espacios en blanco, palabras y líneas
 		ui.message(_('{} caracteres, {} espacios, {} palabras, {} líneas'.format(chars, spaces, words, lines)))
+
+	def script_tabs(self, gesture):
+		if self.y == 0:
+			self.y= 1
+			# Translators: aviso de pestaña favoritos
+			ui.message(_('Favoritos'))
+		else:
+			self.y= 0
+			# Translators: aviso de pestaña general
+			ui.message(_('General'))
 
 	def terminate(self):
 		if cursor and connect:
@@ -295,6 +324,7 @@ escape; desactiva la capa de comandos
 		'kb:g': 'indexSearch',
 		'kb:e': 'indexAnnounce',
 		'kb:c': 'counter',
+		'kb:tab': 'tabs',
 		'kb:s': 'settings',
 		'kb:z': 'historyDelete',
 		'kb:escape': 'close'}

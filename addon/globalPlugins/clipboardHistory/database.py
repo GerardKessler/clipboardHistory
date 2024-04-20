@@ -24,7 +24,7 @@ del sys.path[-3:]
 if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	connect= sql.connect(os.path.join(root_path, "clipboard_history"), check_same_thread= False)
 	cursor= connect.cursor()
-	cursor.execute('CREATE TABLE strings (string TEXT, id INTEGER PRIMARY KEY AUTOINCREMENT)')
+	cursor.execute('CREATE TABLE strings (string TEXT, favorite BOOLEAN, id INTEGER PRIMARY KEY AUTOINCREMENT)')
 	cursor.execute('CREATE TABLE settings (sounds BOOLEAN, max_elements INTEGER, number BOOLEAN)')
 	# Translators: Cadena para la base de datos inicial con un texto de prueba
 	new_content= _('Texto de prueba')
@@ -32,7 +32,7 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 		new_content= api.getClipData()
 	except OSError:
 		pass
-	cursor.execute('INSERT INTO strings (string) VALUES (?)', (new_content,))
+	cursor.execute('INSERT INTO strings (string, favorite) VALUES (?, ?)', (new_content, 0))
 	cursor.execute('INSERT INTO settings (sounds, max_elements, number) VALUES (1, 250, 1)')
 	connect.commit()
 	cursor.execute('VACUUM')
