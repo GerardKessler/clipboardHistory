@@ -15,6 +15,7 @@ import globalVars
 import ui
 from scriptHandler import script
 import os
+from re import findall
 from .database import *
 from .dialogs import *
 from .keyFunc import pressKey, releaseKey
@@ -263,6 +264,16 @@ escape; desactiva la capa de comandos
 		# Translators: Mensaje de aviso de índice del elemento y total del historial
 		ui.message(f'{self.x+1} de {len(self.data)}')
 
+	def script_counter(self, gesture):
+		str= self.data[self.x][0]
+		counter_func= lambda x: len(findall(x, str))
+		chars= counter_func(r'[^\s]')
+		spaces= counter_func(r'[ ^\s]')
+		words= counter_func(r'\b\w+')
+		lines= len(str.splitlines())
+		# Translators: Formateo del mensaje donde se especifica el número de caracteres, espacios en blanco, palabras y líneas
+		ui.message(_('{} caracteres, {} espacios, {} palabras, {} líneas'.format(chars, spaces, words, lines)))
+
 	def terminate(self):
 		if cursor and connect:
 			cursor.close()
@@ -282,6 +293,7 @@ escape; desactiva la capa de comandos
 		'kb:f3': 'searchNextItem',
 		'kb:g': 'indexSearch',
 		'kb:e': 'indexAnnounce',
+		'kb:c': 'counter',
 		'kb:s': 'settings',
 		'kb:z': 'historyDelete',
 		'kb:escape': 'close'}
