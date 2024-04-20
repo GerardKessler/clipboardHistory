@@ -5,7 +5,7 @@ Por  [gera Kessler](http://gera.ar)
 Con la inestimable colaboración de Héctor Benítez.
 
 Este complemento permite gestionar un historial del portapapeles alojado en una base de datos local, lo que impide que se pierdan los datos al reiniciar el sistema.
-Añade comandos para la exploración del historial, así como funciones de búsqueda y visualización de los elementos.
+Añade comandos para la exploración de este historial, así como funciones de búsqueda y visualización de los elementos.
 
 Al instalarlo por primera vez e iniciar NVDA, se crea el archivo "clipboard_history" que contiene la base de datos. Este archivo se aloja en la raíz de la carpeta nvda en los directorios de la configuración del usuario.
 También se crea un escuchador (listener) para capturar los cambios del portapapeles, y actualizar la base de datos cuando haya contenido de texto nuevo.
@@ -30,6 +30,7 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 * Flecha derecha; copia el texto al portapapeles y lo desplaza al comienzo de la lista
 * Flecha izquierda; abre el texto en una ventana de NVDA para su posterior revisión
 * v; Pega el texto en la ventana con el foco
+* c; verbaliza el número de caracteres excluyendo los espacios, los espacios en blanco, las palabras y las líneas
 
 ### Funciones de búsqueda
 

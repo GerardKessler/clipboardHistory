@@ -226,6 +226,7 @@ f; activa la ventana para buscar elementos en la lista
 f3; avanza a la siguiente coincidencia  del texto buscado
 g; activa la ventana para enfocar el elemento por número de órden
 e; verbaliza el número de índice del elemento actual, y el número total de la lista
+c; verbaliza el número de caracteres excluyendo los espacios, los espacios en blanco, las palabras y las líneas
 s; activa el diálogo de configuración del complemento
 z; activa el diálogo para la eliminación de elementos de la lista
 escape; desactiva la capa de comandos
