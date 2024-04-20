@@ -40,6 +40,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.data= []
 		self.x= 0
 		self.y= 0
+		self.temporary_index_data= 0
+		self.temporary_index_favorites= 0
 		self.search_text= None
 		self.switch= False
 		self.dialogs= False
@@ -89,7 +91,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if self.switch or self.dialogs: return
 		cursor.execute('SELECT string, favorite FROM strings ORDER BY id DESC')
 		data= cursor.fetchall()
-		self.data= [data, [e for e in data if e[1] == 1]]
+		favorites= [x for x in data if x[1] == 1]
+		self.data= [data, favorites]
 		cursor.execute('SELECT sounds, max_elements, number FROM settings')
 		settings= cursor.fetchone()
 		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
@@ -110,7 +113,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				self.x= 0
 		elif key == 'upArrow':
 			self.x-=1
-			if self.x < 0:
+			if self.x < 0 or self.x > len(self.data[self.y]):
 				self.x= len(self.data[self.y])-1
 		elif key == 'home':
 			self.x= 0
@@ -136,15 +139,22 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_deleteItem(self, gesture):
 		if len(self.data[self.y]) < 1: return
-		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.x][0],))
+		if self.y == 1:
+			index= self.data[0].index(self.data[1][self.x])
+			self.data[0][index]= (self.data[1][self.x][0], 0)
+			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[1][self.x][0],))
+			self.data[1].pop(self.x)
+			# Translators: Mensaje de favorito eliminado
+			ui.message(_('Eliminado de favoritos'))
+			return
+		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.y][self.x][0],))
 		connect.commit()
-		self.data.pop(self.x)
+		self.data[0].pop(self.x)
 		if self.sounds: self.play('delete')
 		if len(self.data) < 1:
 			ui.message(self.empty)
-			self.finish()
 			return
-		if self.x == len(self.data): self.x-=1
+		if self.x == len(self.data[self.y]): self.x-=1
 		self.speak()
 
 	def speak(self):
@@ -155,7 +165,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def script_pasteItem(self, gesture):
 		if len(self.data[self.y]) < 1: return
-		api.copyToClip(self.data[self.x][0])
+		api.copyToClip(self.data[self.y][self.x][0])
 		self.finish('paste')
 		# Translators: Aviso de mensaje pegado
 		mute(0.2, _('Pegado'))
@@ -190,17 +200,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			ui.message(_('Sin texto de búsqueda'))
 			return
 
-		for i in range(self.x + 1, len(self.data)):
-			if self.search_text.lower() in self.data[i][0].lower():
+		for i in range(self.x + 1, len(self.data[self.y])):
+			if self.search_text.lower() in self.data[self.y][i][0].lower():
 				self.x = i
-				mute(0.2, f'{self.x + 1}; {self.data[self.x][0]}')
+				mute(0.2, f'{self.x + 1}; {self.data[self.y][self.x][0]}')
 				self.bindGestures(self.__newGestures)
 				return
 
 		for i in range(0, self.x + 1):
-			if self.search_text.lower() in self.data[i][0].lower():
+			if self.search_text.lower() in self.data[self.y][i][0].lower():
 				self.x = i
-				mute(0.2, f'{self.x + 1}; {self.data[self.x][0]}')
+				mute(0.2, f'{self.x + 1}; {self.data[self.y][self.x][0]}')
 				self.bindGestures(self.__newGestures)
 				return
 
@@ -259,7 +269,7 @@ escape; desactiva la capa de comandos
 				index= get_search.GetValue()
 				if index.isdigit() and int(index) > 0 and int(index) <= len(self.data):  # Ajuste aquí
 					self.x= int(index)-1
-					mute(0.5, f'{index}; {self.data[self.x][0]}')
+					mute(0.5, f'{index}; {self.data[self.y][self.x][0]}')
 					self.bindGestures(self.__newGestures)
 				else:
 					# Translators: Mensaje de aviso para datos incorrectos o número fuera de rango
@@ -296,13 +306,32 @@ escape; desactiva la capa de comandos
 
 	def script_tabs(self, gesture):
 		if self.y == 0:
+			self.temporary_index_data= self.x
+			self.x= self.temporary_index_favorites
 			self.y= 1
 			# Translators: aviso de pestaña favoritos
 			ui.message(_('Favoritos'))
 		else:
+			self.temporary_index_favorites= self.x
+			self.x= self.temporary_index_data
 			self.y= 0
 			# Translators: aviso de pestaña general
 			ui.message(_('General'))
+
+	def script_favorite(self, gesture):
+		if self.y == 1 or len(self.data[self.y]) < 1: return
+		if self.data[self.y][self.x][1] == 0:
+			self.data[0][self.x]= (self.data[0][self.x][0], 1)
+			self.data[1].append(self.data[0][self.x])
+			cursor.execute('UPDATE strings SET favorite=1 WHERE string = ?', (self.data[0][self.x][0],))
+			# Translators: Mensaje de marcado como favorito
+			ui.message(_('Marcado como favorito'))
+		else:
+			self.data[1].remove(self.data[0][self.x])
+			self.data[0][self.x]= (self.data[0][self.x][0], 0)
+			cursor.execute('UPDATE strings SET favorite=0 WHERE string = ?', (self.data[0][self.x][0],))
+			# Translators: Mensaje de no favorito
+			ui.message(_('No favorito'))
 
 	def terminate(self):
 		if cursor and connect:
@@ -319,7 +348,8 @@ escape; desactiva la capa de comandos
 		'kb:leftArrow': 'viewItem',
 		'kb:backspace': 'deleteItem',
 		'kb:v': 'pasteItem',
-		'kb:f': 'findItem',
+		'kb:b': 'findItem',
+		'kb:f': 'favorite',
 		'kb:f3': 'searchNextItem',
 		'kb:g': 'indexSearch',
 		'kb:e': 'indexAnnounce',

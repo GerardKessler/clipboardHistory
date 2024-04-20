@@ -78,9 +78,15 @@ class ClipboardMonitor:
 				# Si el contenido es None o está vacío, devolver el control a DefWindowProcW
 				return ctypes.windll.user32.DefWindowProcW(hwnd, msg, wParam, lParam)
 			else:
-				cursor.execute('DELETE FROM strings WHERE string=?', (content,))
-				connect.commit()
-				cursor.execute('INSERT INTO strings (string, favorite) VALUES (?, ?)', (content, 0))
+				cursor.execute('SELECT string, favorite FROM strings WHERE string=?', (content,))
+				rs= cursor.fetchone()
+				if rs:
+					cursor.execute('DELETE FROM strings WHERE string=?', (content,))
+					connect.commit()
+					favorite= rs[1]
+				else:
+					favorite= 0
+				cursor.execute('INSERT INTO strings (string, favorite) VALUES (?, ?)', (content, favorite))
 				connect.commit()
 				cursor.execute('SELECT id FROM strings')
 				counter= cursor.fetchall()
