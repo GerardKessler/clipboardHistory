@@ -4,8 +4,8 @@ Por  [gera Kessler](http://gera.ar)
 
 Con la inestimable colaboración de Héctor Benítez.
 
-Este complemento permite gestionar un historial del portapapeles alojado en una base de datos local, lo que impide que se pierdan los datos al reiniciar el sistema.
-Añade comandos para la exploración de este historial, así como funciones de búsqueda y visualización de los elementos.
+Este complemento permite gestionar un historial del portapapeles alojado en una base de datos local, impidiendo que se pierdan los datos al reiniciar el sistema.
+Añade comandos para la exploración del historial, funciones de búsqueda, conteo, favoritos, backup, y visualización de los elementos.
 
 Al instalarlo por primera vez e iniciar NVDA, se crea el archivo "clipboard_history" que contiene la base de datos. Este archivo se aloja en la raíz de la carpeta nvda en los directorios de la configuración del usuario.
 También se crea un escuchador (listener) para capturar los cambios del portapapeles, y actualizar la base de datos cuando haya contenido de texto nuevo.
@@ -26,8 +26,8 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 
 ### Funcionalidades que afectan al elemento enfocado en la lista
 
-* Retroceso; elimina el elemento
-* Flecha derecha; copia el texto al portapapeles y lo desplaza al comienzo de la lista
+* Retroceso; en la lista general elimina el elemento. En favoritos lo desmarca como tal
+* Flecha derecha; copia el texto al portapapeles y lo desplaza al comienzo de la lista general
 * Flecha izquierda; abre el texto en una ventana de NVDA para su posterior revisión
 * v; Pega el texto en la ventana con el foco
 * c; verbaliza el número de caracteres excluyendo los espacios, los espacios en blanco, las palabras y las líneas
@@ -50,15 +50,15 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 
 ## Búsqueda de elementos
 
-Para buscar algún texto del historial por palabras, tan solo hay que pulsar la letra f con la capa de comandos activa.
+Para buscar algún texto del historial por palabras, tan solo hay que pulsar la letra b con la capa de comandos activa.
 Esto abre el diálogo de búsqueda donde podremos escribir alguna palabra o frase, y al pulsar intro se realiza la función.
 Si se encuentra un resultado se verbaliza el texto y su número de orden. Si pulsamos f3, se vuelve a realizar la búsqueda con el mismo contenido, avanzando hasta el siguiente resultado en el caso de encontrar otra coincidencia.
 
 ## Favoritos
 
-Con la capa de comandos activa, la letra f conmuta entre favorito y no favorito.
 La tecla tabulador cambia el enfoque entre la lista general y la lista de favoritos. Cuando esta última está activa, la tecla de retroceso quita el estado favorito del elemento, y a este de la lista.
-Las funciones de copia, visualización, búsqueda, pegado y verbalización de órden cumplen la misma función que en la lista general.
+En la lista general, la letra f conmuta el estado favorito y lo añade o quita de la lista de favoritos.
+Las funciones de copia, visualización, búsqueda, pegado, verbalización de órden, y cerrado de ventana  cumplen la misma función en ambas listass.
 
 ## Ventana de configuración
 
