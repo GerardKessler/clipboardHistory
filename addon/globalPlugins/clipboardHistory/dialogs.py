@@ -282,8 +282,10 @@ import wx.adv
 import wx.lib.agw.aui as aui
 
 class Gui(wx.Dialog):
-	def __init__(self, parent):
+	def __init__(self, parent, frame):
 		super().__init__(parent, title=_('Historial del portapapeles'))
+		
+		self.frame= frame
 		
 		self.listbox= wx.ListBox(self)
 		
@@ -336,7 +338,7 @@ class Gui(wx.Dialog):
 				else:
 					# Translators: verbaliza lista vacía
 					ui.message(_('Lista vacía'))
-		elif keycode == wx.WXK_F9:
+		if (event.AltDown(), event.GetUnicodeKey()) == (True, 127):
 			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 			if modal.ShowModal() == wx.ID_YES:
 				cursor.execute('DELETE FROM strings')
@@ -356,5 +358,10 @@ class Gui(wx.Dialog):
 			self.update()
 			# Translators: mensaje de actualización de contenido
 			ui.message(_('Actualizando'))
-
+		if (event.ControlDown(), event.GetUnicodeKey()) == (True, 80):
+			cursor.execute('SELECT sounds, max_elements, number FROM settings')
+			settings= cursor.fetchone()
+			sounds, max_elements, number= settings[0], settings[1], settings[2]
+			Settings(gui.mainFrame, self.frame, sounds, max_elements, number).Show()
+		
 		event.Skip()

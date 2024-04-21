@@ -88,7 +88,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		gesture= None
 	)
 	def script_basicGui(self, gesture):
-		simple_gui= Gui(gui.mainFrame)
+		simple_gui= Gui(gui.mainFrame, self)
 		gui.mainFrame.prePopup()
 		simple_gui.Show()
 
@@ -295,7 +295,8 @@ escape; desactiva la capa de comandos
 		gui.runScriptModalDialog(get_search, callback)
 
 	def script_settings(self, gesture):
-		self.finish('open')
+		if self.switch:
+			self.finish('open')
 		self.settings_dialog= Settings(gui.mainFrame, self, self.sounds, self.max_elements, self.number)
 		gui.mainFrame.prePopup()
 		self.settings_dialog.Show()
