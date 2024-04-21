@@ -4,18 +4,22 @@ Por  [gera Kessler](http://gera.ar)
 
 Con la inestimable colaboración de Héctor Benítez.
 
-Este complemento permite gestionar un historial del portapapeles alojado en una base de datos local, impidiendo que se pierdan los datos al reiniciar el sistema.
+Este complemento permite gestionar un historial del portapapeles persistiéndolo en una base de datos local, lo que permite conservar los textos aún cuando el sistema se reinicia.
 Añade comandos para la exploración del historial, funciones de búsqueda, conteo, favoritos, backup, y visualización de los elementos.
+A parte de la interacción a través de la capa de comandos con funciones avanzadas, se puede utilizar una versión gráfica sencilla para quienes no quieran compicaciones.
 
 Al instalarlo por primera vez e iniciar NVDA, se crea el archivo "clipboard_history" que contiene la base de datos. Este archivo se aloja en la raíz de la carpeta nvda en los directorios de la configuración del usuario.
 También se crea un escuchador (listener) para capturar los cambios del portapapeles, y actualizar la base de datos cuando haya contenido de texto nuevo.
 El historial no guarda duplicaciones para evitar un crecimiento innecesario de la base de datos. al copiar un texto existente, este se copia en la primera posición de la lista eliminando la anterior.
 
-Para utilizar este complemento es necesario asignar un atajo a la función de activación de la capa de comandos en la configuración de los gestos de entrada, apartado clipboardHistory.
+Hay 2 funciones asignables desde el diálogo gestos de entrada, categoría clipboardHistory. A saber
 
-## Uso
+* Activar la capa de comandos
+* Activar la interfaz gráfica
 
-Una vez activa la capa de comandos con el gesto asignado previamente, tenemos los siguientes grupos de comandos. Si se pulsa alguna tecla diferente a las listadas a continuación, se desactiva la capa de comandos y las teclas vuelven a su funcionalidad por defecto.
+## Capa de comandos
+
+Una vez activa la capa de comandos con el gesto asignado previamente, tenemos los siguientes grupos de atajos. Si se pulsa alguna tecla diferente a las listadas a continuación, se desactiva la capa de comandos y las teclas vuelven a su funcionalidad por defecto.
 
 ### Movimiento en la lista
 
@@ -62,7 +66,7 @@ Las funciones de copia, visualización, búsqueda, pegado, verbalización de ord
 
 ## Ventana de configuración
 
-Al pulsar la letra s con la capa de comandos activa se muestra la interfaz de configuración.
+Al pulsar la letra s con la capa de comandos activa, o control + p en la versión gráfica,  se muestra la interfaz de configuración.
 En ella puede modificarse lo siguiente:
 
 ### Número de cadenas a guardar
@@ -85,3 +89,16 @@ Este botón activa el diálogo para guardar la base de datos en su estado actual
 ### Importar base de datos
 
 Esta opción activa un diálogo  para buscar una base de datos exportada previamente para recuperar los elementos inexistentes en la base de datos actual.
+
+## Interfaz gráfica
+
+Una vez asignado el gesto, esta opción abre la interfaz gráfica que simplifica la navegación e interacción con el historial.
+Los diferentes elementos almacenados aparecen en forma de lista, la cual puede recorrerse con flechas arriba y abajo. Esta ventana tiene los siguientes atajos disponibles:
+
+* f1; verbaliza la posición y el total de elementos
+* intro; copia el texto del elemento enfocado al portapapeles
+* f5; refresca el contenido de la lista
+* suprimir; elimina el elemento enfocado
+* alt + suprimir; elimina el historial
+* control + p; activa la ventana de configuración del complemento
+* escape; cierra la interfaz
