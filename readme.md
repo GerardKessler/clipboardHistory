@@ -24,7 +24,7 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 * Inicio; primer elemento de la lista
 * fin; último elemento de la lista
 
-### Funcionalidades que afectan al elemento enfocado en la lista
+e### Funcionalidades que afectan al elemento enfocado en la lista
 
 * Retroceso; en la lista general elimina el elemento. En favoritos lo desmarca como tal
 * Flecha derecha; copia el texto al portapapeles y lo desplaza al comienzo de la lista general
@@ -51,14 +51,14 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 ## Búsqueda de elementos
 
 Para buscar algún texto del historial por palabras, tan solo hay que pulsar la letra b con la capa de comandos activa.
-Esto abre el diálogo de búsqueda donde podremos escribir alguna palabra o frase, y al pulsar intro se realiza la función.
+Esto abre el diálogo de búsqueda donde al escribir alguna palabra o frase y pulsar intro, se realizará la búsqueda.
 Si se encuentra un resultado se verbaliza el texto y su número de orden. Si pulsamos f3, se vuelve a realizar la búsqueda con el mismo contenido, avanzando hasta el siguiente resultado en el caso de encontrar otra coincidencia.
 
 ## Favoritos
 
 La tecla tabulador cambia el enfoque entre la lista general y la lista de favoritos. Cuando esta última está activa, la tecla de retroceso quita el estado favorito del elemento, y a este de la lista.
 En la lista general, la letra f conmuta el estado favorito y lo añade o quita de la lista de favoritos.
-Las funciones de copia, visualización, búsqueda, pegado, verbalización de órden, y cerrado de ventana  cumplen la misma función en ambas listass.
+Las funciones de copia, visualización, búsqueda, pegado, verbalización de orden, y cerrado de ventana  cumplen la misma función en ambas listas.
 
 ## Ventana de configuración
 
@@ -68,7 +68,7 @@ En ella puede modificarse lo siguiente:
 ### Número de cadenas a guardar
 
 Aquí se puede especificar hasta cuantos elementos se van a guardar en la base de datos. Cuando se supere este número, se van eliminando las entradas antiguas desde la última.
-Si al configurar un número máximo de elementos la base de datos contiene una cantidad mayor a ese valor, cuando se ingresen nuevos datos se eliminarán las entradas antiguas pero manteniendo el número actual de elementos para que el usuario elimine los innecesarios.
+Si al configurar un número máximo de elementos la base de datos contiene una cantidad mayor a ese valor, cuando se ingresen nuevos datos se eliminarán las entradas antiguas pero manteniendo el número actual de elementos para que el usuario pueda seleccionar cuales eliminar.
 
 ### Sonidos
 
@@ -80,7 +80,7 @@ Si está activa esta casilla, al navegar por la lista de elementos se verbaliza 
 
 ### Exportar base de datos
 
-Este botón activa el diálogo para guardar la base de datos en su estado actual para copia de seguridad de los datos alojados en ella, permitiéndo la posterior importación desde otro NVDA con este complemento.
+Este botón activa el diálogo para guardar la base de datos en su estado actual para copia de seguridad de los datos alojados en ella, permitiendo la posterior importación desde otro NVDA con este complemento.
 
 ### Importar base de datos
 
