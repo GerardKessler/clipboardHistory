@@ -239,9 +239,9 @@ class Delete(wx.Dialog):
 	def onDelete(self, event):
 		num= self.split_ctrl.GetValue()
 		if num == len(self.counter):
-			cursor.execute('DELETE FROM strings')
+			cursor.execute('DELETE FROM strings WHERE favorite=0')
 		else:
-			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
+			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings WHERE favorite = 0 ORDER BY id ASC LIMIT ?)', (num,))
 		connect.commit()
 		# Translators: Mensaje de aviso de los elementos eliminados
 		mute(0.3, _('{} elementos eliminados'.format(num)))

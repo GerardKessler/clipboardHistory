@@ -152,7 +152,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		connect.commit()
 		self.data[0].pop(self.x)
 		if self.sounds: self.play('delete')
-		if len(self.data) < 1:
+		if len(self.data[self.y]) < 1:
 			ui.message(self.empty)
 			return
 		if self.x == len(self.data[self.y]): self.x-=1
