@@ -31,17 +31,19 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 * Flecha izquierda; abre el texto en una ventana de NVDA para su posterior revisión
 * v; Pega el texto en la ventana con el foco
 * c; verbaliza el número de caracteres excluyendo los espacios, los espacios en blanco, las palabras y las líneas
+* f; marca o desmarca el elemento como favorito
 
 ### Funciones de búsqueda
 
-* f; activa la ventana para buscar elementos en la lista
+* b; activa la ventana para buscar elementos en la lista
 * f3; avanza a la siguiente coincidencia  del texto buscado
 * g; activa la ventana para enfocar el elemento por número de orden
 
 ### Otras funcionalidades
 
 * f1; muestra una ventana de NVDA con la lista de los atajos de la capa de comandos
-* e; verbaliza el número de índice del elemento actual, y el número total de la lista
+* tab; conmuta entre la lista general y la de favoritos
+* e; verbaliza si es favorito, el número de índice del elemento actual y el número total de la lista
 * s; muestra el  diálogo de configuración del complemento
 * z; muestra el diálogo de eliminación de elementos de la lista
 * escape; desactiva la capa de comandos
@@ -51,6 +53,12 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 Para buscar algún texto del historial por palabras, tan solo hay que pulsar la letra f con la capa de comandos activa.
 Esto abre el diálogo de búsqueda donde podremos escribir alguna palabra o frase, y al pulsar intro se realiza la función.
 Si se encuentra un resultado se verbaliza el texto y su número de orden. Si pulsamos f3, se vuelve a realizar la búsqueda con el mismo contenido, avanzando hasta el siguiente resultado en el caso de encontrar otra coincidencia.
+
+## Favoritos
+
+Con la capa de comandos activa, la letra f conmuta entre favorito y no favorito.
+La tecla tabulador cambia el enfoque entre la lista general y la lista de favoritos. Cuando esta última está activa, la tecla de retroceso quita el estado favorito del elemento, y a este de la lista.
+Las funciones de copia, visualización, búsqueda, pegado y verbalización de órden cumplen la misma función que en la lista general.
 
 ## Ventana de configuración
 

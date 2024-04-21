@@ -142,7 +142,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if self.y == 1:
 			index= self.data[0].index(self.data[1][self.x])
 			self.data[0][index]= (self.data[1][self.x][0], 0)
-			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[1][self.x][0],))
+			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][index][0],))
+			connect.commit()
 			self.data[1].pop(self.x)
 			# Translators: Mensaje de favorito eliminado
 			ui.message(_('Eliminado de favoritos'))
@@ -224,7 +225,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self.finish()
 
 	def script_historyDelete(self, gesture):
-		if len(self.data[self.y]) < 1: return
+		if self.y == 1 or len(self.data[self.y]) < 1: return
 		self.finish()
 		self.delete_dialog= Delete(gui.mainFrame, self)
 		gui.mainFrame.prePopup()
@@ -242,7 +243,9 @@ Flecha derecha; copia el elemento actual al portapapeles y lo desplaza al comien
 Flecha izquierda; abre el contenido del elemento actual en una ventana de NVDA
 Retroceso; elimina el actual elemento de la lista
 v; Pega el contenido del elemento actual en la ventana con el foco
-f; activa la ventana para buscar elementos en la lista
+tab; conmuta entre la lista general y la de favoritos
+f; conmuta entre el estado favorito y no favorito del elemento
+b; activa la ventana para buscar elementos en la lista
 f3; avanza a la siguiente coincidencia  del texto buscado
 g; activa la ventana para enfocar el elemento por número de órden
 e; verbaliza el número de índice del elemento actual, y el número total de la lista
@@ -262,7 +265,7 @@ escape; desactiva la capa de comandos
 			# Translators: Etiqueta del campo para ingresar un número
 			_('Escriba el número y pulse intro'),
 			# Translators: Título de la ventana  con la cantidad de elementos en el historial
-			_('Hay {} elementos en el historial'.format(len(self.data)))
+			_('Hay {} elementos en el historial'.format(len(self.data[self.y])))
 		)
 		def callback(result):
 			if result == wx.ID_OK:
@@ -290,7 +293,7 @@ escape; desactiva la capa de comandos
 		msg= _('{} de {}'.format(self.x+1, len(self.data[self.y])))
 		if self.y == 0 and self.data[self.y][self.x][1] == 1:
 			# Translators: texto favorito
-			msg= msg + _(' (favorito)')
+			msg= _('favorito- ') + msg
 		ui.message(msg)
 
 	def script_counter(self, gesture):
@@ -320,16 +323,18 @@ escape; desactiva la capa de comandos
 
 	def script_favorite(self, gesture):
 		if self.y == 1 or len(self.data[self.y]) < 1: return
-		if self.data[self.y][self.x][1] == 0:
+		if self.data[0][self.x][1] == 0:
 			self.data[0][self.x]= (self.data[0][self.x][0], 1)
 			self.data[1].append(self.data[0][self.x])
-			cursor.execute('UPDATE strings SET favorite=1 WHERE string = ?', (self.data[0][self.x][0],))
+			cursor.execute('UPDATE strings SET favorite=1 WHERE string=?', (self.data[0][self.x][0],))
+			connect.commit()
 			# Translators: Mensaje de marcado como favorito
 			ui.message(_('Marcado como favorito'))
 		else:
 			self.data[1].remove(self.data[0][self.x])
 			self.data[0][self.x]= (self.data[0][self.x][0], 0)
-			cursor.execute('UPDATE strings SET favorite=0 WHERE string = ?', (self.data[0][self.x][0],))
+			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][self.x][0],))
+			connect.commit()
 			# Translators: Mensaje de no favorito
 			ui.message(_('No favorito'))
 
