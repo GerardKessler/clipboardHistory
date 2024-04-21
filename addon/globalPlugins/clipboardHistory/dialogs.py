@@ -276,3 +276,85 @@ class Delete(wx.Dialog):
 		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
+
+import wx
+import wx.adv
+import wx.lib.agw.aui as aui
+
+class Gui(wx.Dialog):
+	def __init__(self, parent):
+		super().__init__(parent, title=_('Historial del portapapeles'))
+		
+		self.listbox= wx.ListBox(self)
+		
+		self.update()
+		
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
+		
+		sizer= wx.BoxSizer(wx.VERTICAL)
+		sizer.Add(self.listbox, 1, wx.EXPAND | wx.ALL, 10)
+		self.SetSizerAndFit(sizer)
+
+	def update(self):
+		self.listbox.Clear()
+		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
+		strings= cursor.fetchall()
+		if len(strings) > 0:
+			choices= [e[0] for e in strings]
+			self.listbox.Append(choices)
+			self.listbox.SetSelection(0)
+
+	def onKeyPress(self, event):
+		keycode= event.GetKeyCode()
+		if keycode == wx.WXK_ESCAPE:
+			self.Destroy()
+			gui.mainFrame.postPopup()
+		elif keycode == wx.WXK_RETURN:
+			selected= self.listbox.GetStringSelection()
+			if selected:
+				clipboard_data= wx.TextDataObject(selected)
+				if wx.TheClipboard.Open():
+					wx.TheClipboard.SetData(clipboard_data)
+					# Translators: verbaliza texto copiado
+					mute(0.3, _('Copiado'))
+					wx.TheClipboard.Close()
+					self.Destroy()
+					gui.mainFrame.postPopup()
+		elif keycode == wx.WXK_DELETE:
+			index= self.listbox.GetSelection()
+			string= self.listbox.GetStringSelection()
+			total= self.listbox.GetCount()
+			if index != wx.NOT_FOUND:
+				self.listbox.Delete(index)
+				cursor.execute('DELETE FROM strings WHERE string=?', (string,))
+				connect.commit()
+				if total > 1:
+					if index > 0:
+						self.listbox.SetSelection(index-1)
+					else:
+						self.listbox.SetSelection(index)
+				else:
+					# Translators: verbaliza lista vacía
+					ui.message(_('Lista vacía'))
+		elif keycode == wx.WXK_F9:
+			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+			if modal.ShowModal() == wx.ID_YES:
+				cursor.execute('DELETE FROM strings')
+				connect.commit()
+				self.Destroy()
+				gui.mainFrame.postPopup()
+				# Translators: mensaje de base de datos eliminada
+				mute(0.3, _('Base de datos eliminada'))
+		elif keycode == wx.WXK_F1:
+			selected= self.listbox.GetSelection()
+			if selected != wx.NOT_FOUND:
+				total= self.listbox.GetCount()
+				position= selected + 1
+				# Translators: verbaliza el índice actual y el total
+				ui.message(_('{} de {}'.format(position, total)))
+		elif keycode == wx.WXK_F5:
+			self.update()
+			# Translators: mensaje de actualización de contenido
+			ui.message(_('Actualizando'))
+
+		event.Skip()

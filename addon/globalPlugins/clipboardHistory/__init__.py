@@ -84,6 +84,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		category= 'clipboardHistory',
 		# Translators: Descripción del elemento en el diálogo gestos de entrada
+		description= _('Activa la interfaz gráfica con el historial del portapapeles'),
+		gesture= None
+	)
+	def script_basicGui(self, gesture):
+		simple_gui= Gui(gui.mainFrame)
+		gui.mainFrame.prePopup()
+		simple_gui.Show()
+
+	@script(
+		category= 'clipboardHistory',
+		# Translators: Descripción del elemento en el diálogo gestos de entrada
 		description= _('Activa la capa de comandos'),
 		gesture= None
 	)
