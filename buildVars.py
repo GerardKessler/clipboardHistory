@@ -16,11 +16,11 @@ def _(arg):
 # Add-on information variables
 addon_info = {
 	# add-on Name/identifier, internal for NVDA
-	"addon_name": "clipboardHistory",
+	"addon_name": "clipboardHistoryBeta",
 	# Add-on summary, usually the user visible name of the addon.
 	# Translators: Summary for this add-on
 	# to be shown on installation and add-on information found in Add-ons Manager.
-	"addon_summary": _("clipboardHistory"),
+	"addon_summary": _("Historial del portapapeles"),
 	# Add-on description
 	# Translators: Long description to be shown for this add-on on add-on information from add-ons manager
 	"addon_description": _("""Módulo global que guarda el historial del portapapeles de Windows en una base de datos local, permitiendo la persistencia y la gestión a través de una interfaz invisible.

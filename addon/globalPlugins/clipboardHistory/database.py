@@ -40,3 +40,13 @@ if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 else:
 	connect= sql.connect(os.path.join(root_path, 'clipboard_history'), check_same_thread= False)
 	cursor= connect.cursor()
+	
+	### funcionalidad temporal para los beta testers con base de datos diferentes
+	cursor.execute('PRAGMA table_info(strings)')
+	columns= cursor.fetchall()
+	column_names= [column[1] for column in columns]
+	if 'favorite' not in column_names:
+					cursor.execute('ALTER TABLE strings ADD COLUMN favorite BOOLEAN')
+					connect.commit()
+					cursor.execute('UPDATE strings SET favorite=0')
+					connect.commit()

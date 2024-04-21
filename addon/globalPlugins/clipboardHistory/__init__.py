@@ -148,7 +148,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			# Translators: Mensaje de favorito eliminado
 			ui.message(_('Eliminado de favoritos'))
 			return
-		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[self.y][self.x][0],))
+		try:
+			self.data[1].remove(self.data[0][self.x])
+		except ValueError:
+			pass
+		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[0][self.x][0],))
 		connect.commit()
 		self.data[0].pop(self.x)
 		if self.sounds: self.play('delete')

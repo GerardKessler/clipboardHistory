@@ -96,7 +96,7 @@ class Settings(wx.Dialog):
 		self.CenterOnScreen()
 
 	def onSave(self, event):
-		sounds = self.sounds_checkbox.GetValue()
+		sounds= self.sounds_checkbox.GetValue()
 		max_elements = int(self.max_elements_listbox.GetStringSelection())
 		number = self.number_checkbox.GetValue()
 		if sounds == self.sounds and max_elements == self.max_elements and number == self.number:
@@ -205,6 +205,9 @@ class Delete(wx.Dialog):
 		# Control para seleccionar el número de elementos a eliminar
 		self.split_ctrl = wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
 		
+		# Translators: Texto de la casilla de verificación para la eliminación de los favoritos
+		self.favorites_checkbox= wx.CheckBox(panel, label=_('Incluir los favoritos en la eliminación'))
+		
 		# Botones para eliminar y cancelar
 		# Translators: Etiqueta del botón eliminar
 		delete_button = wx.Button(panel, label=_('&Eliminar'))
@@ -218,6 +221,7 @@ class Delete(wx.Dialog):
 		# Agrega los elementos al sizer principal
 		main_sizer.Add(static_text, 0, wx.ALL, 10)
 		main_sizer.Add(self.split_ctrl, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
+		main_sizer.Add(self.favorites_checkbox, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 		button_sizer.Add(delete_button, 1, wx.EXPAND | wx.RIGHT, 5)  # Añade el botón con expansión
 		button_sizer.Add(cancel_button, 1, wx.EXPAND | wx.LEFT, 5)   # Añade el botón con expansión
 		
@@ -238,13 +242,20 @@ class Delete(wx.Dialog):
 
 	def onDelete(self, event):
 		num= self.split_ctrl.GetValue()
+		favorites= self.favorites_checkbox.GetValue()
 		if num == len(self.counter):
-			cursor.execute('DELETE FROM strings WHERE favorite=0')
+			if favorites:
+				cursor.execute('DELETE FROM strings')
+			else:
+				cursor.execute('DELETE FROM strings WHERE favorite=0')
 		else:
-			cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings WHERE favorite = 0 ORDER BY id ASC LIMIT ?)', (num,))
+			if favorites:
+				cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
+			else:
+				cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings WHERE favorite = 0 ORDER BY id ASC LIMIT ?)', (num,))
 		connect.commit()
 		# Translators: Mensaje de aviso de los elementos eliminados
-		mute(0.3, _('{} elementos eliminados'.format(num)))
+		mute(0.3, _('Elementos eliminados'))
 		self.frame.dialogs= False
 		self.Destroy()
 		gui.mainFrame.postPopup()
