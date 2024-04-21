@@ -28,7 +28,7 @@ Una vez activa la capa de comandos con el gesto asignado previamente, tenemos lo
 * Inicio; primer elemento de la lista
 * fin; último elemento de la lista
 
-e### Funcionalidades que afectan al elemento enfocado en la lista
+### Funcionalidades que afectan al elemento enfocado en la lista
 
 * Retroceso; en la lista general elimina el elemento. En favoritos lo desmarca como tal
 * Flecha derecha; copia el texto al portapapeles y lo desplaza al comienzo de la lista general
