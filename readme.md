@@ -93,7 +93,10 @@ Esta opción activa un diálogo  para buscar una base de datos exportada previam
 ## Interfaz gráfica
 
 Una vez asignado el gesto, esta opción abre la interfaz gráfica que simplifica la navegación e interacción con el historial.
-Los diferentes elementos almacenados aparecen en forma de lista, la cual puede recorrerse con flechas arriba y abajo. Esta ventana tiene los siguientes atajos disponibles:
+Los diferentes elementos almacenados aparecen en forma de lista, la cual puede recorrerse con flechas arriba y abajo.
+Al tabular teniendo seleccionado algún elemento en la lista, el contenido se muestra en un cuadro de solo lectura.
+
+La lista de elementos tiene los siguientes atajos disponibles:
 
 * f1; verbaliza la posición y el total de elementos
 * intro; copia el texto del elemento enfocado al portapapeles

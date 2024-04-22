@@ -284,37 +284,59 @@ import wx.lib.agw.aui as aui
 class Gui(wx.Dialog):
 	def __init__(self, parent, frame):
 		super().__init__(parent, title=_('Historial del portapapeles'))
+
+		self.frame = frame
+
+		self.listbox_statictext= wx.StaticText(self, label=_('Historial'))
+		self.listbox = wx.ListBox(self)
 		
-		self.frame= frame
-		
-		self.listbox= wx.ListBox(self)
-		
+		self.statictext= wx.StaticText(self, label=_('Contenido'))
+		self.textctrl= wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY)
+
 		self.update()
-		
-		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress)
-		
-		sizer= wx.BoxSizer(wx.VERTICAL)
+
+		self.listbox.Bind(wx.EVT_LISTBOX, self.onListBoxSelection)
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPress, self.listbox)
+		self.Bind(wx.EVT_CHAR_HOOK, self.onKeyPressGui)
+
+		sizer = wx.BoxSizer(wx.VERTICAL)
 		sizer.Add(self.listbox, 1, wx.EXPAND | wx.ALL, 10)
+		sizer.Add(self.listbox_statictext, 0, wx.LEFT | wx.BOTTOM, 10)
+		sizer.Add(self.statictext, 0, wx.LEFT | wx.BOTTOM, 10)
+		sizer.Add(self.textctrl, 1, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 10)
 		self.SetSizerAndFit(sizer)
 
 	def update(self):
 		self.listbox.Clear()
 		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
-		strings= cursor.fetchall()
+		strings = cursor.fetchall()
 		if len(strings) > 0:
-			choices= [e[0] for e in strings]
+			choices = [e[0] for e in strings]
 			self.listbox.Append(choices)
 			self.listbox.SetSelection(0)
 
+	def onListBoxSelection(self, event):
+		selected= self.listbox.GetStringSelection()
+		if selected:
+			self.textctrl.SetValue(selected)
+
+	def onKeyPressGui(self, event):
+		keycode = event.GetKeyCode()
+		if keycode == wx.WXK_ESCAPE:
+			self.Destroy()
+			gui.mainFrame.postPopup()
+		event.Skip()
+
 	def onKeyPress(self, event):
-		keycode= event.GetKeyCode()
+		keycode = event.GetKeyCode()
 		if keycode == wx.WXK_ESCAPE:
 			self.Destroy()
 			gui.mainFrame.postPopup()
 		elif keycode == wx.WXK_RETURN:
-			selected= self.listbox.GetStringSelection()
+			selected = self.listbox.GetStringSelection()
 			if selected:
-				clipboard_data= wx.TextDataObject(selected)
+				self.textctrl.SetValue(selected)
+				clipboard_data = wx.TextDataObject(selected)
 				if wx.TheClipboard.Open():
 					wx.TheClipboard.SetData(clipboard_data)
 					# Translators: verbaliza texto copiado
@@ -323,23 +345,24 @@ class Gui(wx.Dialog):
 					self.Destroy()
 					gui.mainFrame.postPopup()
 		elif keycode == wx.WXK_DELETE:
-			index= self.listbox.GetSelection()
-			string= self.listbox.GetStringSelection()
-			total= self.listbox.GetCount()
+			index = self.listbox.GetSelection()
+			string = self.listbox.GetStringSelection()
+			total = self.listbox.GetCount()
 			if index != wx.NOT_FOUND:
 				self.listbox.Delete(index)
 				cursor.execute('DELETE FROM strings WHERE string=?', (string,))
 				connect.commit()
 				if total > 1:
 					if index > 0:
-						self.listbox.SetSelection(index-1)
+						self.listbox.SetSelection(index - 1)
 					else:
 						self.listbox.SetSelection(index)
 				else:
 					# Translators: verbaliza lista vacía
 					ui.message(_('Lista vacía'))
 		if (event.AltDown(), event.GetUnicodeKey()) == (True, 127):
-			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'),
+									 _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 			if modal.ShowModal() == wx.ID_YES:
 				cursor.execute('DELETE FROM strings')
 				connect.commit()
@@ -348,10 +371,10 @@ class Gui(wx.Dialog):
 				# Translators: mensaje de base de datos eliminada
 				mute(0.3, _('Base de datos eliminada'))
 		elif keycode == wx.WXK_F1:
-			selected= self.listbox.GetSelection()
+			selected = self.listbox.GetSelection()
 			if selected != wx.NOT_FOUND:
-				total= self.listbox.GetCount()
-				position= selected + 1
+				total = self.listbox.GetCount()
+				position = selected + 1
 				# Translators: verbaliza el índice actual y el total
 				ui.message(_('{} de {}'.format(position, total)))
 		elif keycode == wx.WXK_F5:
@@ -360,8 +383,8 @@ class Gui(wx.Dialog):
 			ui.message(_('Actualizando'))
 		if (event.ControlDown(), event.GetUnicodeKey()) == (True, 80):
 			cursor.execute('SELECT sounds, max_elements, number FROM settings')
-			settings= cursor.fetchone()
-			sounds, max_elements, number= settings[0], settings[1], settings[2]
+			settings = cursor.fetchone()
+			sounds, max_elements, number = settings[0], settings[1], settings[2]
 			Settings(gui.mainFrame, self.frame, sounds, max_elements, number).Show()
-		
+
 		event.Skip()
