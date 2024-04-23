@@ -35,6 +35,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	# Translators: Mensaje de lista vacía
 	empty= _('Lista vacía')
+	
 	def __init__(self, *args, **kwargs):
 		super(GlobalPlugin, self).__init__(*args, **kwargs)
 		self.data= []

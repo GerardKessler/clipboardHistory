@@ -112,12 +112,6 @@ class Settings(wx.Dialog):
 		gui.mainFrame.postPopup()
 
 	def onKeyPress(self, event):
-		"""
-		Manejador de eventos para teclas presionadas en el diálogo.
-
-		Args:
-			event: El evento de teclado.
-		"""
 		if event.GetKeyCode() == wx.WXK_ESCAPE:
 			self.onCancel(None)
 		else:
