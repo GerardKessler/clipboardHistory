@@ -101,12 +101,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_viewData(self, gesture):
 		if self.switch or self.dialogs: return
-		cursor.execute('SELECT string, favorite FROM strings ORDER BY id DESC')
-		data= cursor.fetchall()
+		db.cursor.execute('SELECT string, favorite FROM strings ORDER BY id DESC')
+		data= db.cursor.fetchall()
 		favorites= [x for x in data if x[1] == 1]
 		self.data= [data, favorites]
-		cursor.execute('SELECT sounds, max_elements, number FROM settings')
-		settings= cursor.fetchone()
+		db.cursor.execute('SELECT sounds, max_elements, number FROM settings')
+		settings= db.cursor.fetchone()
 		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
 		if self.sounds: self.play('start')
 		self.switch= True
@@ -114,48 +114,54 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		# Translators: Aviso de historial abierto
 		ui.message(_('Historial abierto'))
 
+	def emptyListDecorator(fn):
+		def wrapper(self, gesture):
+			if len(self.data[self.y]) < 1:
+				ui.message(self.empty)
+				return
+			return fn(self, gesture)
+		return wrapper
+
+	@emptyListDecorator
 	def script_items(self, gesture):
-		if len(self.data[self.y]) < 1:
-			ui.message(self.empty)
-			return
 		key= gesture.mainKeyName
 		if key == 'downArrow':
-			self.x+=1
-			if self.x >= len(self.data[self.y]):
-				self.x= 0
+			if self.x < len(self.data[self.y])-1: self.x+=1
 		elif key == 'upArrow':
-			self.x-=1
-			if self.x < 0 or self.x > len(self.data[self.y]):
-				self.x= len(self.data[self.y])-1
+			if self.x > 0: self.x-=1
 		elif key == 'home':
 			self.x= 0
 		elif key == 'end':
 			self.x= len(self.data[self.y])-1
-		if self.sounds: self.play('click')
+		if self.sounds:
+			if self.x == 0 or self.x == len(self.data[self.y])-1:
+				self.play('stop')
+			else:
+				self.play('click')
 		self.speak()
 
+	@emptyListDecorator
 	def script_copyItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		api.copyToClip(self.data[self.y][self.x][0])
 		# Translators: Mensaje de elemento copiado
 		ui.message(_('Elemento copiado'))
 		self.finish('copy')
 
+	@emptyListDecorator
 	def script_viewItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		# Translators: Título de la ventana con el contenido
 		ui.browseableMessage(self.data[self.y][self.x][0], _('Contenido'))
 		self.finish('open')
 		# Translators: Mensaje que avisa que se está mostrando el contenido
 		mute(0.1, _('Mostrando el contenido'))
 
+	@emptyListDecorator
 	def script_deleteItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		if self.y == 1:
 			index= self.data[0].index(self.data[1][self.x])
 			self.data[0][index]= (self.data[1][self.x][0], 0)
-			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][index][0],))
-			connect.commit()
+			db.cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][index][0],))
+			db.connect.commit()
 			self.data[1].pop(self.x)
 			# Translators: Mensaje de favorito eliminado
 			ui.message(_('Eliminado de favoritos'))
@@ -164,8 +170,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.data[1].remove(self.data[0][self.x])
 		except ValueError:
 			pass
-		cursor.execute('DELETE FROM strings WHERE string=?', (self.data[0][self.x][0],))
-		connect.commit()
+		db.cursor.execute('DELETE FROM strings WHERE string=?', (self.data[0][self.x][0],))
+		db.connect.commit()
 		self.data[0].pop(self.x)
 		if self.sounds: self.play('delete')
 		if len(self.data[self.y]) < 1:
@@ -180,8 +186,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		else:
 			ui.message(self.data[self.y][self.x][0])
 
+	@emptyListDecorator
 	def script_pasteItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		api.copyToClip(self.data[self.y][self.x][0])
 		self.finish('paste')
 		# Translators: Aviso de mensaje pegado
@@ -191,8 +197,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		releaseKey(0x56)
 		releaseKey(0x11)
 
+	@emptyListDecorator
 	def script_findItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
@@ -207,8 +213,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 				self.startSearch()
 		gui.runScriptModalDialog(get_search, callback)
 
+	@emptyListDecorator
 	def script_searchNextItem(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		self.startSearch()
 
 	def startSearch(self):
@@ -240,8 +246,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		mute(0.3, _('Historial cerrado'))
 		self.finish()
 
+	@emptyListDecorator
 	def script_historyDelete(self, gesture):
-		if self.y == 1 or len(self.data[self.y]) < 1: return
 		self.finish()
 		self.delete_dialog= Delete(gui.mainFrame, self)
 		gui.mainFrame.prePopup()
@@ -273,8 +279,8 @@ escape; desactiva la capa de comandos
 		# Translators: Título de la ventana con la lista de comandos
 		ui.browseableMessage(string, _('Lista de comandos'))
 
+	@emptyListDecorator
 	def script_indexSearch(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		self.finish()
 		get_search= wx.TextEntryDialog(
 			gui.mainFrame,
@@ -302,10 +308,8 @@ escape; desactiva la capa de comandos
 		gui.mainFrame.prePopup()
 		self.settings_dialog.Show()
 
+	@emptyListDecorator
 	def script_indexAnnounce(self, gesture):
-		if len(self.data[self.y]) < 1:
-			ui.message(self.empty)
-			return
 		# Translators: Mensaje de aviso de índice del elemento  total del historial
 		msg= _('{} de {}'.format(self.x+1, len(self.data[self.y])))
 		if self.y == 0 and self.data[self.y][self.x][1] == 1:
@@ -313,8 +317,8 @@ escape; desactiva la capa de comandos
 			msg= _('favorito- ') + msg
 		ui.message(msg)
 
+	@emptyListDecorator
 	def script_counter(self, gesture):
-		if len(self.data[self.y]) < 1: return
 		str= self.data[self.y][self.x][0]
 		counter_func= lambda x: len(findall(x, str))
 		chars= counter_func(r'[^\s]')
@@ -338,27 +342,27 @@ escape; desactiva la capa de comandos
 			# Translators: aviso de pestaña general
 			ui.message(_('General'))
 
+	@emptyListDecorator
 	def script_favorite(self, gesture):
-		if self.y == 1 or len(self.data[self.y]) < 1: return
 		if self.data[0][self.x][1] == 0:
 			self.data[0][self.x]= (self.data[0][self.x][0], 1)
 			self.data[1].append(self.data[0][self.x])
-			cursor.execute('UPDATE strings SET favorite=1 WHERE string=?', (self.data[0][self.x][0],))
-			connect.commit()
+			db.cursor.execute('UPDATE strings SET favorite=1 WHERE string=?', (self.data[0][self.x][0],))
+			db.connect.commit()
 			# Translators: Mensaje de marcado como favorito
 			ui.message(_('Marcado como favorito'))
 		else:
 			self.data[1].remove(self.data[0][self.x])
 			self.data[0][self.x]= (self.data[0][self.x][0], 0)
-			cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][self.x][0],))
-			connect.commit()
+			db.cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][self.x][0],))
+			db.connect.commit()
 			# Translators: Mensaje de no favorito
 			ui.message(_('No favorito'))
 
 	def terminate(self):
 		if cursor and connect:
-			cursor.close()
-			connect.close()
+			db.cursor.close()
+			db.connect.close()
 			self.monitor.stop_monitoring()
 
 	__newGestures= {'kb:f1': 'commandList',
