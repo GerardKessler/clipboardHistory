@@ -103,8 +103,8 @@ class Settings(wx.Dialog):
 			# Translators: Mensaje de aviso que indica que no hubo cambios
 			mute(0.3, _('Sin cambios en la configuración'))
 		else:
-			cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
-			connect.commit()
+			db.cursor.execute('UPDATE settings SET sounds=?, max_elements=?, number=?', (sounds, max_elements, number))
+			db.connect.commit()
 			# Translators: Mensaje de aviso de cambios guardados correctamente
 			mute(0.3, _('Cambios guardados correctamente'))
 		self.frame.dialogs= False
@@ -147,8 +147,8 @@ class Settings(wx.Dialog):
 				imported_strings= cr.fetchall()
 				cn.close()
 				
-				cursor.execute('SELECT string FROM strings')
-				existing_strings= cursor.fetchall()
+				db.cursor.execute('SELECT string FROM strings')
+				existing_strings= db.cursor.fetchall()
 				existing_set= set(existing_strings)
 				
 				# Filtramos las cadenas importadas para incluir solo las que no están en la base de datos actual
@@ -159,9 +159,9 @@ class Settings(wx.Dialog):
 					modal = wx.MessageDialog(None, _('Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(unique_strings))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 					if modal.ShowModal() == wx.ID_YES:
 						unique_strings.extend(existing_strings)
-						cursor.execute('DELETE FROM strings')
-						cursor.executemany('INSERT INTO strings (string, favorite) VALUES (?, 0)', unique_strings)
-						connect.commit()
+						db.cursor.execute('DELETE FROM strings')
+						db.cursor.executemany('INSERT INTO strings (string, favorite) VALUES (?, 0)', unique_strings)
+						db.connect.commit()
 						# Translators: Mensaje de aviso de los elementos agregados
 						mute(0.5, _('{} elementos agregados'.format(len(unique_strings) - len(existing_strings))))
 				else:
@@ -187,8 +187,8 @@ class Delete(wx.Dialog):
 		self.frame= frame
 		self.frame.dialogs= True
 		
-		cursor.execute('SELECT id FROM strings')
-		self.counter= cursor.fetchall()
+		db.cursor.execute('SELECT id FROM strings')
+		self.counter= db.cursor.fetchall()
 		
 		# Panel principal del diálogo
 		panel = wx.Panel(self)
@@ -239,15 +239,15 @@ class Delete(wx.Dialog):
 		favorites= self.favorites_checkbox.GetValue()
 		if num == len(self.counter):
 			if favorites:
-				cursor.execute('DELETE FROM strings')
+				db.cursor.execute('DELETE FROM strings')
 			else:
-				cursor.execute('DELETE FROM strings WHERE favorite=0')
+				db.cursor.execute('DELETE FROM strings WHERE favorite=0')
 		else:
 			if favorites:
-				cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
+				db.cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings ORDER BY id ASC LIMIT ?)', (num,))
 			else:
-				cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings WHERE favorite = 0 ORDER BY id ASC LIMIT ?)', (num,))
-		connect.commit()
+				db.cursor.execute('DELETE FROM strings WHERE id IN (SELECT id FROM strings WHERE favorite = 0 ORDER BY id ASC LIMIT ?)', (num,))
+		db.connect.commit()
 		# Translators: Mensaje de aviso de los elementos eliminados
 		mute(0.3, _('Elementos eliminados'))
 		self.frame.dialogs= False
@@ -302,8 +302,8 @@ class Gui(wx.Dialog):
 
 	def update(self):
 		self.listbox.Clear()
-		cursor.execute('SELECT string FROM strings ORDER BY id DESC')
-		strings = cursor.fetchall()
+		db.cursor.execute('SELECT string FROM strings ORDER BY id DESC')
+		strings = db.cursor.fetchall()
 		if len(strings) > 0:
 			choices = [e[0] for e in strings]
 			self.listbox.Append(choices)
@@ -344,8 +344,8 @@ class Gui(wx.Dialog):
 			total = self.listbox.GetCount()
 			if index != wx.NOT_FOUND:
 				self.listbox.Delete(index)
-				cursor.execute('DELETE FROM strings WHERE string=?', (string,))
-				connect.commit()
+				db.cursor.execute('DELETE FROM strings WHERE string=?', (string,))
+				db.connect.commit()
 				if total > 1:
 					if index > 0:
 						self.listbox.SetSelection(index - 1)
@@ -358,8 +358,8 @@ class Gui(wx.Dialog):
 			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'),
 									 _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 			if modal.ShowModal() == wx.ID_YES:
-				cursor.execute('DELETE FROM strings')
-				connect.commit()
+				db.cursor.execute('DELETE FROM strings')
+				db.connect.commit()
 				self.Destroy()
 				gui.mainFrame.postPopup()
 				# Translators: mensaje de base de datos eliminada
@@ -376,8 +376,8 @@ class Gui(wx.Dialog):
 			# Translators: mensaje de actualización de contenido
 			ui.message(_('Actualizando'))
 		if (event.ControlDown(), event.GetUnicodeKey()) == (True, 80):
-			cursor.execute('SELECT sounds, max_elements, number FROM settings')
-			settings = cursor.fetchone()
+			db.cursor.execute('SELECT sounds, max_elements, number FROM settings')
+			settings = db.cursor.fetchone()
 			sounds, max_elements, number = settings[0], settings[1], settings[2]
 			Settings(gui.mainFrame, self.frame, sounds, max_elements, number).Show()
 
