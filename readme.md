@@ -17,6 +17,9 @@ Hay 2 funciones asignables desde el diálogo gestos de entrada, categoría clipb
 * Activar la capa de comandos
 * Activar la interfaz gráfica
 
+Nota importante:  
+El historial del portapapeles puede conservar datos sensibles, por lo que es responsabilidad del usuario el eliminar el contenido antes de compartir una versión portable con copia de la configuración.
+
 ## Capa de comandos
 
 Una vez activa la capa de comandos con el gesto asignado previamente, tenemos los siguientes grupos de atajos. Si se pulsa alguna tecla diferente a las listadas a continuación, se desactiva la capa de comandos y las teclas vuelven a su funcionalidad por defecto.
