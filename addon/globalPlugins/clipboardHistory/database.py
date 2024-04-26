@@ -41,6 +41,35 @@ class DB:
 		self.cursor.execute('INSERT INTO settings (sounds, max_elements, number) VALUES (1, 250, 1)')
 		self.connect.commit()
 
+	def insert(self, query, values):
+		self.cursor.execute(query, values)
+		self.connect.commit()
+
+	def get(self, query, fetch, values=None):
+		if values:
+			self.cursor.execute(query, values)
+		else:
+			self.cursor.execute(query)
+		if fetch == 'all':
+			return self.cursor.fetchall()
+		elif fetch == 'one':
+			return self.cursor.fetchone()
+
+	def update(self, query, values):
+		self.cursor.execute(query, values)
+		self.connect.commit()
+
+	def delete(self, query, values=None):
+		if values:
+			self.cursor.execute(query, values)
+		else:
+			self.cursor.execute(query)
+		self.connect.commit()
+
+	def many(self, query, values):
+		self.cursor.executemany(query, values)
+		self.connect.commit()
+
 db= DB()
 if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
 	db.initialStructure()

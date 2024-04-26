@@ -98,12 +98,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	)
 	def script_viewData(self, gesture):
 		if self.switch or self.dialogs: return
-		db.cursor.execute('SELECT string, favorite FROM strings ORDER BY id DESC')
-		data= db.cursor.fetchall()
+		data= db.get('SELECT string, favorite FROM strings ORDER BY id DESC', 'all')
 		favorites= [x for x in data if x[1] == 1]
 		self.data= [data, favorites]
-		db.cursor.execute('SELECT sounds, max_elements, number FROM settings')
-		settings= db.cursor.fetchone()
+		settings= db.get('SELECT sounds, max_elements, number FROM settings', 'one')
 		self.sounds, self.max_elements, self.number= settings[0], settings[1], settings[2]
 		if self.sounds: self.play('start')
 		self.switch= True
@@ -158,8 +156,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if self.y == 1:
 			index= self.data[0].index(self.data[1][self.x])
 			self.data[0][index]= (self.data[1][self.x][0], 0)
-			db.cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][index][0],))
-			db.connect.commit()
+			db.update('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][index][0],))
 			self.data[1].pop(self.x)
 			# Translators: Mensaje de favorito eliminado
 			ui.message(_('Eliminado de favoritos'))
@@ -168,8 +165,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			self.data[1].remove(self.data[0][self.x])
 		except ValueError:
 			pass
-		db.cursor.execute('DELETE FROM strings WHERE string=?', (self.data[0][self.x][0],))
-		db.connect.commit()
+		db.delete('DELETE FROM strings WHERE string=?', (self.data[0][self.x][0],))
 		self.data[0].pop(self.x)
 		if self.sounds: self.play('delete')
 		if len(self.data[self.y]) < 1:
@@ -345,15 +341,13 @@ escape; desactiva la capa de comandos
 		if self.data[0][self.x][1] == 0:
 			self.data[0][self.x]= (self.data[0][self.x][0], 1)
 			self.data[1].append(self.data[0][self.x])
-			db.cursor.execute('UPDATE strings SET favorite=1 WHERE string=?', (self.data[0][self.x][0],))
-			db.connect.commit()
+			db.update('UPDATE strings SET favorite=1 WHERE string=?', (self.data[0][self.x][0],))
 			# Translators: Mensaje de marcado como favorito
 			ui.message(_('Marcado como favorito'))
 		else:
 			self.data[1].remove(self.data[0][self.x])
 			self.data[0][self.x]= (self.data[0][self.x][0], 0)
-			db.cursor.execute('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][self.x][0],))
-			db.connect.commit()
+			db.update('UPDATE strings SET favorite=0 WHERE string=?', (self.data[0][self.x][0],))
 			# Translators: Mensaje de no favorito
 			ui.message(_('No favorito'))
 

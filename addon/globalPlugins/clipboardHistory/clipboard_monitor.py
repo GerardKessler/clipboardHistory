@@ -78,23 +78,17 @@ class ClipboardMonitor:
 				# Si el contenido es None o está vacío, devolver el control a DefWindowProcW
 				return ctypes.windll.user32.DefWindowProcW(hwnd, msg, wParam, lParam)
 			else:
-				db.cursor.execute('SELECT string, favorite FROM strings WHERE string=?', (content,))
-				rs= db.cursor.fetchone()
+				rs= db.get('SELECT string, favorite FROM strings WHERE string=?', 'one', (content,))
 				if rs:
-					db.cursor.execute('DELETE FROM strings WHERE string=?', (content,))
-					db.connect.commit()
+					db.delete('DELETE FROM strings WHERE string=?', (content,))
 					favorite= rs[1]
 				else:
 					favorite= 0
-				db.cursor.execute('INSERT INTO strings (string, favorite) VALUES (?, ?)', (content, favorite))
-				db.connect.commit()
-				db.cursor.execute('SELECT id FROM strings')
-				counter= db.cursor.fetchall()
-				db.cursor.execute('SELECT max_elements FROM settings')
-				max_elements= db.cursor.fetchone()
+				db.insert('INSERT INTO strings (string, favorite) VALUES (?, ?)', (content, favorite))
+				counter= db.get('SELECT id FROM strings', 'all')
+				max_elements= db.get('SELECT max_elements FROM settings', 'one')
 				if max_elements[0] != 0 and len(counter) > max_elements[0]:
-					db.cursor.execute('DELETE FROM strings WHERE id=?', (counter[0][0],))
-					db.connect.commit()
+					db.delete('DELETE FROM strings WHERE id=?', (counter[0][0],))
 
 		return ctypes.windll.user32.DefWindowProcW(hwnd, msg, wParam, lParam)
 
