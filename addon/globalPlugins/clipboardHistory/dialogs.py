@@ -67,6 +67,7 @@ class Settings(wx.Dialog):
 		save_button = wx.Button(panel, label='&Guardar cambios')
 		# Translators: Texto del botón cancelar
 		cancel_button = wx.Button(panel, label='&Cancelar')
+		cancel_button.SetDefault()
 
 		# Eventos de botones
 		save_button.Bind(wx.EVT_BUTTON, self.onSave)
@@ -208,6 +209,7 @@ class Delete(wx.Dialog):
 		delete_button = wx.Button(panel, label=_('&Eliminar'))
 		# Translators: Etiqueta del botón cancelar
 		cancel_button = wx.Button(panel, label=_('&Cancelar'))
+		cancel_button.SetDefault()
 
 		# Sizer principal en vertical
 		main_sizer = wx.BoxSizer(wx.VERTICAL)
