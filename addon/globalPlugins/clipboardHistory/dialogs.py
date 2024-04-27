@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
+# Copyright (C) 2024 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -11,6 +11,10 @@ import wx
 from time import sleep
 from threading import Thread
 from .database import *
+import addonHandler
+
+# Lína de traducción
+addonHandler.initTranslation()
 
 # Función para romper la cadena de verbalización y callar al sintetizador durante el tiempo especificado
 def mute(time, msg= False):
@@ -48,11 +52,11 @@ class Settings(wx.Dialog):
 		self.max_elements_listbox.SetFocus()
 
 		# Translators: Texto de la casilla de verificación para la activación de los sonidos
-		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los sonidos del complemento'))
+		self.sounds_checkbox = wx.CheckBox(panel, label=_('Activar los &sonidos del complemento'))
 		self.sounds_checkbox.SetValue(self.sounds)
 
 		# Translators: Texto de la casilla de verificación para la verbalización de los números de índice de los elementos de la lista
-		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el número de índice de los elementos de la lista'))
+		self.number_checkbox = wx.CheckBox(panel, label=_('Verbalizar el &número de índice de los elementos de la lista'))
 		self.number_checkbox.SetValue(self.number)
 
 		# Translators: Etiqueta del botón para exportar la base de datos
@@ -154,13 +158,13 @@ class Settings(wx.Dialog):
 				
 				if len(unique_strings) > 0:
 					# Translators: Texto del diálogo que indica la cantidad de elementos nuevos y pregunta por el añadido a la base de datos
-					modal = wx.MessageDialog(None, _('Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?'.format(len(unique_strings))), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+					modal = wx.MessageDialog(None, _('Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a la base de datos?').format(len(unique_strings)), _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
 					if modal.ShowModal() == wx.ID_YES:
 						unique_strings.extend(existing_strings)
 						db.delete('DELETE FROM strings')
 						db.many('INSERT INTO strings (string, favorite) VALUES (?, 0)', unique_strings)
 						# Translators: Mensaje de aviso de los elementos agregados
-						mute(0.5, _('{} elementos agregados'.format(len(unique_strings) - len(existing_strings))))
+						mute(0.5, _('{} elementos agregados').format(len(unique_strings) - len(existing_strings)))
 				else:
 					# Translators: Mensaje de aviso que indica que no hay nuevos elementos para añadir
 					mute(0.3, _('No hay nuevos elementos para agregar'))
@@ -179,6 +183,7 @@ class Settings(wx.Dialog):
 
 class Delete(wx.Dialog):
 	def __init__(self, parent, frame):
+		# Translators: Título de la ventana de eliminación de elementos
 		super().__init__(parent, title=_('Eliminar elementos'))
 		
 		self.frame= frame
@@ -196,7 +201,7 @@ class Delete(wx.Dialog):
 		self.split_ctrl = wx.SpinCtrl(panel, value=str(len(self.counter)), min=1, max=len(self.counter))
 		
 		# Translators: Texto de la casilla de verificación para la eliminación de los favoritos
-		self.favorites_checkbox= wx.CheckBox(panel, label=_('Incluir los favoritos en la eliminación'))
+		self.favorites_checkbox= wx.CheckBox(panel, label=_('Incluir los &favoritos en la eliminación'))
 		
 		# Botones para eliminar y cancelar
 		# Translators: Etiqueta del botón eliminar
@@ -272,13 +277,16 @@ import wx.lib.agw.aui as aui
 
 class Gui(wx.Dialog):
 	def __init__(self, parent, frame):
+		# Translators: Título de la ventana del historial del portapapeles
 		super().__init__(parent, title=_('Historial del portapapeles'))
 
 		self.frame = frame
 
+		# Translators: Texto de la etiqueta estática de la lista del historial
 		self.listbox_statictext= wx.StaticText(self, label=_('Historial'))
 		self.listbox = wx.ListBox(self)
 		
+		# Translators: Etiqueta del texto estático del campo de contenido
 		self.statictext= wx.StaticText(self, label=_('Contenido'))
 		self.textctrl= wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY)
 
@@ -348,8 +356,14 @@ class Gui(wx.Dialog):
 					# Translators: verbaliza lista vacía
 					ui.message(_('Lista vacía'))
 		if (event.AltDown(), event.GetUnicodeKey()) == (True, 127):
-			modal = wx.MessageDialog(None, _('¿Seguro que quieres eliminar todo el contenido de la base de datos?'),
-									 _('Atención'), wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+			modal = wx.MessageDialog(
+				None,
+				# Translators: Texto de la ventana para eliminar el contenido de la base de datos
+				_('¿Seguro que quieres eliminar todo el contenido de la base de datos?'),
+				# Translators: Título de la ventana modal de eliminación de la base de datos
+				_('Atención'),
+				wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION
+			)
 			if modal.ShowModal() == wx.ID_YES:
 				db.delete('DELETE FROM strings')
 				self.Destroy()
@@ -362,7 +376,7 @@ class Gui(wx.Dialog):
 				total = self.listbox.GetCount()
 				position = selected + 1
 				# Translators: verbaliza el índice actual y el total
-				ui.message(_('{} de {}'.format(position, total)))
+				ui.message(_('{} de {}').format(position, total))
 		elif keycode == wx.WXK_F5:
 			self.update()
 			# Translators: mensaje de actualización de contenido

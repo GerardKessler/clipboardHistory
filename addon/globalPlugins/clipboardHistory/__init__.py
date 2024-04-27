@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
+# Copyright (C) 2024 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -17,6 +17,7 @@ from scriptHandler import script
 import os
 from re import findall
 from .database import *
+from .securityUtils import secureBrowseableMessage  # Created by Cyrille (@CyrilleB79)
 from .dialogs import *
 from .keyFunc import pressKey, releaseKey
 from .clipboard_monitor import ClipboardMonitor
@@ -35,6 +36,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	# Translators: Mensaje de lista vacía
 	empty= _('Lista vacía')
+	# Translators: nombre de categoría en el diálogo de gestos de entrada
+	category_name= _('Historial del portapapeles')
 	
 	def __init__(self, *args, **kwargs):
 		super(GlobalPlugin, self).__init__(*args, **kwargs)
@@ -80,7 +83,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		if sound: playWaveFile(os.path.join(dirAddon, 'sounds', '{}.wav'.format(sound)))
 
 	@script(
-		category= 'clipboardHistory',
+		category= category_name,
 		# Translators: Descripción del elemento en el diálogo gestos de entrada
 		description= _('Activa la interfaz gráfica'),
 		gesture= None
@@ -91,7 +94,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		simple_gui.Show()
 
 	@script(
-		category= 'clipboardHistory',
+		category= category_name,
 		# Translators: Descripción del elemento en el diálogo gestos de entrada
 		description= _('Activa la capa de comandos'),
 		gesture= None
@@ -148,7 +151,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@emptyListDecorator
 	def script_viewItem(self, gesture):
 		# Translators: Título de la ventana con el contenido
-		ui.browseableMessage(self.data[self.y][self.x][0], _('Contenido'))
+		secureBrowseableMessage(self.data[self.y][self.x][0], _('Contenido'))
 		self.finish('open')
 		# Translators: Mensaje que avisa que se está mostrando el contenido
 		mute(0.1, _('Mostrando el contenido'))
@@ -178,7 +181,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def speak(self):
 		if self.number:
-			ui.message(f'{self.x+1}; {self.data[self.y][self.x][0]}')
+			ui.message('{}; {}').format(self.x+1, self.data[self.y][self.x][0])
 		else:
 			ui.message(self.data[self.y][self.x][0])
 
@@ -222,14 +225,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		for i in range(self.x + 1, len(self.data[self.y])):
 			if self.search_text.lower() in self.data[self.y][i][0].lower():
 				self.x = i
-				mute(0.2, f'{self.x + 1}; {self.data[self.y][self.x][0]}')
+				mute(0.2, '{}; {}'.format(self.x + 1, self.data[self.y][self.x][0]))
 				self.bindGestures(self.__newGestures)
 				return
 
 		for i in range(0, self.x + 1):
 			if self.search_text.lower() in self.data[self.y][i][0].lower():
 				self.x = i
-				mute(0.2, f'{self.x + 1}; {self.data[self.y][self.x][0]}')
+				mute(0.2, '{}; {}'.format(self.x + 1, self.data[self.y][self.x][0]))
 				self.bindGestures(self.__newGestures)
 				return
 
@@ -273,7 +276,7 @@ z; activa el diálogo para la eliminación de elementos de la lista
 escape; desactiva la capa de comandos
 		''')
 		# Translators: Título de la ventana con la lista de comandos
-		ui.browseableMessage(string, _('Lista de comandos'))
+		secureBrowseableMessage(string, _('Lista de comandos'))
 
 	@emptyListDecorator
 	def script_indexSearch(self, gesture):
@@ -283,14 +286,14 @@ escape; desactiva la capa de comandos
 			# Translators: Etiqueta del campo para ingresar un número
 			_('Escriba el número y pulse intro'),
 			# Translators: Título de la ventana  con la cantidad de elementos en el historial
-			_('Hay {} elementos en el historial'.format(len(self.data[self.y])))
+			_('Hay {} elementos en el historial').format(len(self.data[self.y]))
 		)
 		def callback(result):
 			if result == wx.ID_OK:
 				index= get_search.GetValue()
 				if index.isdigit() and int(index) > 0 and int(index) <= len(self.data):  # Ajuste aquí
 					self.x= int(index)-1
-					mute(0.5, f'{index}; {self.data[self.y][self.x][0]}')
+					mute(0.5, '{}; {}'.format(index, self.data[self.y][self.x][0]))
 					self.bindGestures(self.__newGestures)
 				else:
 					# Translators: Mensaje de aviso para datos incorrectos o número fuera de rango
@@ -307,7 +310,7 @@ escape; desactiva la capa de comandos
 	@emptyListDecorator
 	def script_indexAnnounce(self, gesture):
 		# Translators: Mensaje de aviso de índice del elemento  total del historial
-		msg= _('{} de {}'.format(self.x+1, len(self.data[self.y])))
+		msg= _('{} de {}').format(self.x+1, len(self.data[self.y]))
 		if self.y == 0 and self.data[self.y][self.x][1] == 1:
 			# Translators: texto favorito
 			msg= _('favorito- ') + msg
@@ -322,7 +325,7 @@ escape; desactiva la capa de comandos
 		words= counter_func(r'\b\w+')
 		lines= len(str.splitlines())
 		# Translators: Formateo del mensaje donde se especifica el número de caracteres, espacios en blanco, palabras y líneas
-		ui.message(_('{} caracteres, {} espacios, {} palabras, {} líneas'.format(chars, spaces, words, lines)))
+		ui.message(_('{} caracteres, {} espacios, {} palabras, {} líneas').format(chars, spaces, words, lines))
 
 	def script_tabs(self, gesture):
 		if self.y == 0:

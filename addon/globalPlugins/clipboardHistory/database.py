@@ -1,5 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
-# Copyright (C) 2021 Gerardo Kessler <gera.ar@yahoo.com>
+# Copyright (C) 2024 Gerardo Kessler <gera.ar@yahoo.com>
 # This file is covered by the GNU General Public License.
 # Código del script clipboard-monitor perteneciente a Héctor Benítez
 
@@ -20,6 +20,10 @@ else:
 	from .lib._37 import sqlite3 as sql
 	sql.__path__.append(os.path.join(dirAddon, "lib", "_37", "sqlite3"))
 del sys.path[-3:]
+import addonHandler
+
+# Lína de traducción
+addonHandler.initTranslation()
 
 class DB:
 	def __init__(self):

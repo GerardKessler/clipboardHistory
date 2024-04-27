@@ -30,7 +30,7 @@ Permite buscar, visualizar, obtener datos del texto, gestionar favoritos, pegar 
 	# Author(s)
 	"addon_author": "Gerardo Kessler <gera.ar@yahoo.com>",
 	# URL for the add-on documentation support
-	"addon_url": None,
+	"addon_url": "https://github.com/GerardKessler/clipboardHistory",
 	# URL for the add-on repository where the source code can be found
 	"addon_sourceURL": "https://github.com/GerardKessler/clipboardHistory",
 	# Documentation file name
@@ -44,9 +44,9 @@ Permite buscar, visualizar, obtener datos del texto, gestionar favoritos, pegar 
 	# Do not change unless you know what you are doing!
 	"addon_updateChannel": None,
 	# Add-on license such as GPL 2
-	"addon_license": None,
+	"addon_license": "GPL 2",
 	# URL for the license document the ad-on is licensed under
-	"addon_licenseURL": None,
+	"addon_licenseURL": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
 }
 
 # Define the python files that are the sources of your add-on.
