@@ -115,6 +115,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 			if len(self.data[self.y]) < 1:
 				ui.message(self.empty)
 				return
+			elif self.x >= len(self.data[self.y]) - 1:
+				self.x= len(self.data[self.y]) - 1
 			return fn(self, gesture)
 		return wrapper
 
@@ -257,7 +259,7 @@ Inicio; primer elemento de la lista
 fin; último elemento de la lista
 Flecha derecha; copia el elemento actual al portapapeles y lo desplaza al comienzo de la lista
 Flecha izquierda; abre el contenido del elemento actual en una ventana de NVDA
-Retroceso; elimina el actual elemento de la lista
+Retroceso; En la lista general elimina el actual elemento de la lista, en la de favoritos lo desmarca como tal
 v; Pega el contenido del elemento actual en la ventana con el foco
 tab; conmuta entre la lista general y la de favoritos
 f; conmuta entre el estado favorito y no favorito del elemento
