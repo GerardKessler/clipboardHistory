@@ -311,7 +311,9 @@ class Gui(wx.Dialog):
 		if len(strings) > 0:
 			choices = [e[0] for e in strings]
 			self.listbox.Append(choices)
-			self.listbox.SetSelection(0)
+			if self.listbox.GetCount() > 0:
+				self.listbox.SetSelection(0)
+				self.textctrl.SetValue(self.listbox.GetStringSelection())
 
 	def onListBoxSelection(self, event):
 		selected= self.listbox.GetStringSelection()
