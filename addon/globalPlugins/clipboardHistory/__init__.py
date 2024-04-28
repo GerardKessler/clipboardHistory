@@ -181,7 +181,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 	def speak(self):
 		if self.number:
-			ui.message('{}; {}').format(self.x+1, self.data[self.y][self.x][0])
+			ui.message('{}; {}'.format(self.x+1, self.data[self.y][self.x][0]))
 		else:
 			ui.message(self.data[self.y][self.x][0])
 

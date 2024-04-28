@@ -27,10 +27,14 @@ addonHandler.initTranslation()
 
 class DB:
 	def __init__(self):
-		self.connect= sql.connect(os.path.join(root_path, "clipboard_history"), check_same_thread= False)
+		self.connect= sql.connect(os.path.join(root_path, 'clipboard_history'), check_same_thread= False)
 		self.cursor= self.connect.cursor()
-		self.cursor.execute('VACUUM')
-		self.connect.commit()
+		self.cursor.execute('PRAGMA TABLE_INFO(strings)')
+		if len(self.cursor.fetchall()) == 0:
+			self.initialStructure()
+		else:
+			self.cursor.execute('VACUUM')
+			self.connect.commit()
 
 	def initialStructure(self):
 		self.cursor.execute('CREATE TABLE strings (string TEXT, favorite BOOLEAN, id INTEGER PRIMARY KEY AUTOINCREMENT)')
@@ -75,5 +79,3 @@ class DB:
 		self.connect.commit()
 
 db= DB()
-if not os.path.exists(os.path.join(root_path, 'clipboard_history')):
-	db.initialStructure()
