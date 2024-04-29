@@ -60,13 +60,13 @@ class Settings(wx.Dialog):
 		self.number_checkbox.SetValue(self.number)
 
 		# Translators: Etiqueta del botón para exportar la base de datos
-		export_button = wx.Button(panel, label='&Exportar base de datos')
+		export_button = wx.Button(panel, label=_('&Exportar base de datos'))
 		# Translators: Etiqueta del botón para importar una base de datos
-		import_button = wx.Button(panel, label='&Importar base de datos')
+		import_button = wx.Button(panel, label=_('&Importar base de datos'))
 		# Translators: Texto del botón para guardar los cambios
-		save_button = wx.Button(panel, label='&Guardar cambios')
+		save_button = wx.Button(panel, label=_('&Guardar cambios'))
 		# Translators: Texto del botón cancelar
-		cancel_button = wx.Button(panel, label='&Cancelar')
+		cancel_button = wx.Button(panel, label=_('&Cancelar'))
 		cancel_button.SetDefault()
 
 		# Eventos de botones
