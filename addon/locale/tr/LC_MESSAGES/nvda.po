@@ -1,0 +1,307 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pano Geçmişi\n"
+"POT-Creation-Date: 2024-04-29 21:10+0300\n"
+"PO-Revision-Date: 2024-04-29 21:11+0300\n"
+"Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
+"Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
+"Language: tr_TR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ../../../globalPlugins\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: clipboardHistory/__init__.py:38 clipboardHistory/dialogs.py:361
+msgid "Lista vacía"
+msgstr "Liste boş"
+
+#: clipboardHistory/__init__.py:40 clipboardHistory/dialogs.py:283
+msgid "Historial del portapapeles"
+msgstr "Pano geçmişi"
+
+#: clipboardHistory/__init__.py:71
+msgid "Historial Cerrado"
+msgstr "Geçmişi kapat"
+
+#: clipboardHistory/__init__.py:88
+msgid "Activa la interfaz gráfica"
+msgstr "Grafik arayüzü etkinleştirir"
+
+#: clipboardHistory/__init__.py:99
+msgid "Activa la capa de comandos"
+msgstr "Komut katmanını etkinleştirir"
+
+#: clipboardHistory/__init__.py:113
+msgid "Historial abierto"
+msgstr "Geçmişi aç"
+
+#: clipboardHistory/__init__.py:148
+msgid "Elemento copiado"
+msgstr "Kopyalanan öğe"
+
+#: clipboardHistory/__init__.py:154 clipboardHistory/dialogs.py:292
+msgid "Contenido"
+msgstr "İçerik"
+
+#: clipboardHistory/__init__.py:157
+msgid "Mostrando el contenido"
+msgstr "Gösterilen içerik"
+
+#: clipboardHistory/__init__.py:167
+msgid "Eliminado de favoritos"
+msgstr "Favorilerden kaldırıldı"
+
+#: clipboardHistory/__init__.py:193
+msgid "Pegado"
+msgstr "Yapıştırıldı"
+
+#: clipboardHistory/__init__.py:205
+msgid "Escriba la búsqueda y pulse intro"
+msgstr "Aramak için yazın ve Enter tuşuna basın"
+
+#: clipboardHistory/__init__.py:207
+msgid "Buscador"
+msgstr "Ara"
+
+#: clipboardHistory/__init__.py:222
+msgid "Sin texto de búsqueda"
+msgstr "Aranacak metin yok"
+
+#: clipboardHistory/__init__.py:240
+msgid "Sin resultados"
+msgstr "Sonuç bulunamadı"
+
+#: clipboardHistory/__init__.py:245
+msgid "Historial cerrado"
+msgstr "Geçmiş kapalı"
+
+#: clipboardHistory/__init__.py:258
+msgid ""
+"\n"
+"Flecha arriba; anterior elemento de la lista\n"
+"Flecha abajo; siguiente elemento de la lista\n"
+"Inicio; primer elemento de la lista\n"
+"fin; último elemento de la lista\n"
+"Flecha derecha; copia el elemento actual al portapapeles y lo desplaza al "
+"comienzo de la lista\n"
+"Flecha izquierda; abre el contenido del elemento actual en una ventana de "
+"NVDA\n"
+"Retroceso; En la lista general elimina el actual elemento de la lista, en la "
+"de favoritos lo desmarca como tal\n"
+"v; Pega el contenido del elemento actual en la ventana con el foco\n"
+"tab; conmuta entre la lista general y la de favoritos\n"
+"f; conmuta entre el estado favorito y no favorito del elemento\n"
+"b; activa la ventana para buscar elementos en la lista\n"
+"f3; avanza a la siguiente coincidencia  del texto buscado\n"
+"g; activa la ventana para enfocar el elemento por número de órden\n"
+"e; verbaliza el número de índice del elemento actual, y el número total de "
+"la lista\n"
+"c; verbaliza el número de caracteres excluyendo los espacios, los espacios "
+"en blanco, las palabras y las líneas\n"
+"s; activa el diálogo de configuración del complemento\n"
+"z; activa el diálogo para la eliminación de elementos de la lista\n"
+"escape; desactiva la capa de comandos\n"
+"\t\t"
+msgstr ""
+"\n"
+"Yukarı ok; önceki liste öğesi\n"
+"Aşağı ok; sonraki liste öğesi\n"
+"Baş; listedeki ilk öğe\n"
+"son; listedeki son öğe\n"
+"Sağ ok; geçerli öğeyi panoya kopyalar ve listenin başına taşır\n"
+"Sol ok; Geçerli öğenin içeriğini bir NVDA penceresinde açar\n"
+"Geri TUŞU; Genel listede geçerli öğeyi listeden siler, favorilerde ise bu "
+"öğenin işaretini kaldırır.\n"
+"v; Geçerli öğenin içeriğini odaklanılan pencereye yapıştırır\n"
+"sekme; genel liste ile favoriler listesi arasında geçiş yapar\n"
+"F; öğeyi favorilere ekler veya çıkarır\n"
+"B; listedeki öğeleri aramak için pencereyi etkinleştirir\n"
+"f3; aranan metnin bir sonraki eşleşmesine ilerler\n"
+"G; öğeye sipariş numarasına göre odaklanmak için pencereyi etkinleştirir\n"
+"E; Geçerli öğenin dizin numarasını ve listenin toplam sayısını sözlü olarak "
+"belirtir\n"
+"C; boşluklar, boşluklar, kelimeler ve satırlar hariç karakter sayısını sözlü "
+"olarak ifade eder\n"
+"S; eklenti yapılandırma iletişim kutusunu etkinleştirir\n"
+"z; listeden öğeleri kaldırmak için iletişim kutusunu etkinleştirir\n"
+"escape; komut katmanını devre dışı bırakır\n"
+"\t\t"
+
+#: clipboardHistory/__init__.py:279
+msgid "Lista de comandos"
+msgstr "Komut listesi"
+
+#: clipboardHistory/__init__.py:287
+msgid "Escriba el número y pulse intro"
+msgstr "Numarayı yazın ve enter tuşuna basın"
+
+#: clipboardHistory/__init__.py:289
+msgid "Hay {} elementos en el historial"
+msgstr "Geçmişte {} öğe var"
+
+#: clipboardHistory/__init__.py:300
+msgid "Dato incorrecto o fuera de rango"
+msgstr "Yanlış veri veya aralık dışında"
+
+#: clipboardHistory/__init__.py:313 clipboardHistory/dialogs.py:383
+msgid "{} de {}"
+msgstr "{} bölü {}"
+
+#: clipboardHistory/__init__.py:316
+msgid "favorito- "
+msgstr "favori- "
+
+#: clipboardHistory/__init__.py:328
+msgid "{} caracteres, {} espacios, {} palabras, {} líneas"
+msgstr "{} karakter, {} boşluk, {} kelime, {} satır"
+
+#: clipboardHistory/__init__.py:336
+msgid "Favoritos"
+msgstr "Favoriler"
+
+#: clipboardHistory/__init__.py:342
+msgid "General"
+msgstr "Genel"
+
+#: clipboardHistory/__init__.py:351
+msgid "Marcado como favorito"
+msgstr "Favori olarak işaretlendi"
+
+#: clipboardHistory/__init__.py:357
+msgid "No favorito"
+msgstr "Favori değil"
+
+#: clipboardHistory/database.py:43
+msgid "Texto de prueba"
+msgstr "Test Metni"
+
+#: clipboardHistory/dialogs.py:36
+msgid "Configuraciones"
+msgstr "Ayarlar"
+
+#: clipboardHistory/dialogs.py:49
+msgid ""
+"Selecciona el número máximo de cadenas a guardar en la base de datos. 0 "
+"indica sin límite:"
+msgstr ""
+"Veritabanına kaydedilecek maksimum dize sayısını seçin. 0 limit olmadığını "
+"gösterir:"
+
+#: clipboardHistory/dialogs.py:55
+msgid "Activar los &sonidos del complemento"
+msgstr "Eklenti &seslerini etkinleştir"
+
+#: clipboardHistory/dialogs.py:59
+msgid "Verbalizar el &número de índice de los elementos de la lista"
+msgstr "Liste öğelerinin dizin &numarasını söyle"
+
+#: clipboardHistory/dialogs.py:63
+#| msgid "Exportar base de datos"
+msgid "&Exportar base de datos"
+msgstr "Veritabanını &dışa aktar"
+
+#: clipboardHistory/dialogs.py:65
+msgid "&Importar base de datos"
+msgstr "Veritabanını &içe aktar"
+
+#: clipboardHistory/dialogs.py:67
+msgid "&Guardar cambios"
+msgstr "Değişiklikleri &Kaydet"
+
+#: clipboardHistory/dialogs.py:69 clipboardHistory/dialogs.py:211
+msgid "&Cancelar"
+msgstr "İpta&l"
+
+#: clipboardHistory/dialogs.py:109
+msgid "Sin cambios en la configuración"
+msgstr "Ayarlarda değişiklik yok"
+
+#: clipboardHistory/dialogs.py:113
+msgid "Cambios guardados correctamente"
+msgstr "Değişiklikler başarıyla kaydedildi"
+
+#: clipboardHistory/dialogs.py:131
+msgid "Exportar base de datos"
+msgstr "Veritabanını dışa aktar"
+
+#: clipboardHistory/dialogs.py:136
+msgid "Base de datos exportada correctamente"
+msgstr "Veritabanı başarıyla dışa aktarıldı"
+
+#: clipboardHistory/dialogs.py:144
+msgid "Importar base de datos"
+msgstr "Veritabanını içe aktar"
+
+#: clipboardHistory/dialogs.py:162
+msgid ""
+"Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a "
+"la base de datos?"
+msgstr ""
+"Yedekleme dosyasında {} farklı öğe var. Bunları veritabanına eklemek istiyor "
+"musunuz?"
+
+#: clipboardHistory/dialogs.py:162 clipboardHistory/dialogs.py:368
+msgid "Atención"
+msgstr "Uyarı"
+
+#: clipboardHistory/dialogs.py:168
+msgid "{} elementos agregados"
+msgstr "{} öğe eklendi"
+
+#: clipboardHistory/dialogs.py:171
+msgid "No hay nuevos elementos para agregar"
+msgstr "Eklenecek yeni öğe yok"
+
+#: clipboardHistory/dialogs.py:174
+msgid ""
+"Error al intentar acceder a la base de datos de respaldo. El archivo no es "
+"válido o está corrupto"
+msgstr ""
+"Yedekleme veritabanına erişmeye çalışırken hata oluştu. Dosya geçersiz veya "
+"bozuk"
+
+#: clipboardHistory/dialogs.py:177
+msgid "Error inesperado: {}"
+msgstr "Beklenmeyen hata: {}"
+
+#: clipboardHistory/dialogs.py:188
+msgid "Eliminar elementos"
+msgstr "Öğeleri Sil"
+
+#: clipboardHistory/dialogs.py:199
+msgid "Selecciona el número de elementos a eliminar"
+msgstr "Silinecek öğe sayısını seçin"
+
+#: clipboardHistory/dialogs.py:205
+msgid "Incluir los &favoritos en la eliminación"
+msgstr "&Favorileri silme işlemine dahil et"
+
+#: clipboardHistory/dialogs.py:209
+msgid "&Eliminar"
+msgstr "Kaldı&r"
+
+#: clipboardHistory/dialogs.py:254
+msgid "Elementos eliminados"
+msgstr "Silinen öğeler"
+
+#: clipboardHistory/dialogs.py:288
+msgid "Historial"
+msgstr "Geçmiş"
+
+#: clipboardHistory/dialogs.py:343
+msgid "Copiado"
+msgstr "Kopyalandı"
+
+#: clipboardHistory/dialogs.py:366
+msgid "¿Seguro que quieres eliminar todo el contenido de la base de datos?"
+msgstr "Veritabanındaki tüm içeriği silmek istediğinizden emin misiniz?"
+
+#: clipboardHistory/dialogs.py:376
+msgid "Base de datos eliminada"
+msgstr "Veritabanı silindi"
+
+#: clipboardHistory/dialogs.py:387
+msgid "Actualizando"
+msgstr "Güncelleniyor"
