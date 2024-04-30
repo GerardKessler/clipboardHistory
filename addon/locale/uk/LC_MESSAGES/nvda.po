@@ -1,0 +1,321 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
+"POT-Creation-Date: 2024-04-30 08:56+0300\n"
+"PO-Revision-Date: 2024-04-30 21:35+0300\n"
+"Last-Translator: Volodymyr Pyrih <vp88.mobile@gmail.com>\n"
+"Language-Team: \n"
+"Language: uk_UA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: .\n"
+
+#: clipboardHistory/__init__.py:38 clipboardHistory/dialogs.py:361
+msgid "Lista vacía"
+msgstr "Список порожній"
+
+#: clipboardHistory/__init__.py:40 clipboardHistory/dialogs.py:283
+msgid "Historial del portapapeles"
+msgstr "Історія буфера обміну"
+
+#: clipboardHistory/__init__.py:71
+msgid "Historial Cerrado"
+msgstr "Історію закрито"
+
+#: clipboardHistory/__init__.py:88
+msgid "Activa la interfaz gráfica"
+msgstr "Активувати графічний інтерфейс"
+
+#: clipboardHistory/__init__.py:99
+msgid "Activa la capa de comandos"
+msgstr "Активувати командний рівень"
+
+#: clipboardHistory/__init__.py:113
+msgid "Historial abierto"
+msgstr "Історію відкрито"
+
+#: clipboardHistory/__init__.py:148
+msgid "Elemento copiado"
+msgstr "Елемент скопійовано"
+
+#: clipboardHistory/__init__.py:154 clipboardHistory/dialogs.py:292
+msgid "Contenido"
+msgstr "Зміст"
+
+#: clipboardHistory/__init__.py:157
+msgid "Mostrando el contenido"
+msgstr "Показ вмісту"
+
+#: clipboardHistory/__init__.py:167
+msgid "Eliminado de favoritos"
+msgstr "Видалено з улюбленого"
+
+#: clipboardHistory/__init__.py:193
+msgid "Pegado"
+msgstr "Вставити"
+
+#: clipboardHistory/__init__.py:205
+msgid "Escriba la búsqueda y pulse intro"
+msgstr "Введіть запит і натисніть enter"
+
+#: clipboardHistory/__init__.py:207
+msgid "Buscador"
+msgstr "Пошук"
+
+#: clipboardHistory/__init__.py:222
+msgid "Sin texto de búsqueda"
+msgstr "Немає пошукового тексту"
+
+#: clipboardHistory/__init__.py:240
+msgid "Sin resultados"
+msgstr "Не знайдено"
+
+#: clipboardHistory/__init__.py:245
+msgid "Historial cerrado"
+msgstr "Історію закрито"
+
+#: clipboardHistory/__init__.py:258
+msgid ""
+"\n"
+"Flecha arriba; anterior elemento de la lista\n"
+"Flecha abajo; siguiente elemento de la lista\n"
+"Inicio; primer elemento de la lista\n"
+"fin; último elemento de la lista\n"
+"Flecha derecha; copia el elemento actual al portapapeles y lo desplaza al "
+"comienzo de la lista\n"
+"Flecha izquierda; abre el contenido del elemento actual en una ventana de "
+"NVDA\n"
+"Retroceso; En la lista general elimina el actual elemento de la lista, en la "
+"de favoritos lo desmarca como tal\n"
+"v; Pega el contenido del elemento actual en la ventana con el foco\n"
+"tab; conmuta entre la lista general y la de favoritos\n"
+"f; conmuta entre el estado favorito y no favorito del elemento\n"
+"b; activa la ventana para buscar elementos en la lista\n"
+"f3; avanza a la siguiente coincidencia  del texto buscado\n"
+"g; activa la ventana para enfocar el elemento por número de órden\n"
+"e; verbaliza el número de índice del elemento actual, y el número total de "
+"la lista\n"
+"c; verbaliza el número de caracteres excluyendo los espacios, los espacios "
+"en blanco, las palabras y las líneas\n"
+"s; activa el diálogo de configuración del complemento\n"
+"z; activa el diálogo para la eliminación de elementos de la lista\n"
+"escape; desactiva la capa de comandos\n"
+"\t\t"
+msgstr ""
+"\n"
+"Стрілка вгору; попередній пункт у списку\n"
+"Стрілка вниз; наступний пункт у списку\n"
+"На початок; перший пункт у списку\n"
+"в кінець; останній пункт у списку\n"
+"стрілка вправо; копіює поточний елемент у буфер обміну та переміщує його на "
+"початок списку\n"
+"стрілка вліво; відкриває вміст поточного елемента у діалозі NVDA\n"
+"Backspace; У загальному списку видаляє поточний елемент зі списку, в "
+"улюбленому знімає його як такий\n"
+"v; Вставляє вміст поточного елемента у вікно у фокусі\n"
+"Tab; перемикає між загальним списком і улюбленим\n"
+"F; перемикає між улюбленим і неулюбленим статусом елемента\n"
+"b; активує вікно для пошуку елементів у списку\n"
+"f3; переходить до наступного збігу пошуку\n"
+"g; активує діалог для фокусування елемента за номером\n"
+"і; промовляє номер поточного елемента та загальний номер у списку\n"
+"c; промовляє кількість символів, пробілів,, слів і рядків\n"
+"s; активує діалог налаштування додатка\n"
+"z; активує діалог для видалення елементів зі списку\n"
+"escape; вимкнути командний рівень\n"
+"\t\t"
+
+#: clipboardHistory/__init__.py:279
+msgid "Lista de comandos"
+msgstr "Список команд"
+
+#: clipboardHistory/__init__.py:287
+msgid "Escriba el número y pulse intro"
+msgstr "Введіть номер і натисніть enter"
+
+#: clipboardHistory/__init__.py:289
+msgid "Hay {} elementos en el historial"
+msgstr "В історії є {} елементів"
+
+#: clipboardHistory/__init__.py:300
+msgid "Dato incorrecto o fuera de rango"
+msgstr "Неправильні дані або поза діапазоном"
+
+#: clipboardHistory/__init__.py:313 clipboardHistory/dialogs.py:383
+msgid "{} de {}"
+msgstr "{} з {}"
+
+#: clipboardHistory/__init__.py:316
+msgid "favorito- "
+msgstr "улюблене "
+
+#: clipboardHistory/__init__.py:328
+msgid "{} caracteres, {} espacios, {} palabras, {} líneas"
+msgstr "{} символів, {} пробілів, {} слів, {} рядків"
+
+#: clipboardHistory/__init__.py:336
+msgid "Favoritos"
+msgstr "Улюблене"
+
+#: clipboardHistory/__init__.py:342
+msgid "General"
+msgstr "Загальне"
+
+#: clipboardHistory/__init__.py:351
+msgid "Marcado como favorito"
+msgstr "Позначено як улюблене"
+
+#: clipboardHistory/__init__.py:357
+msgid "No favorito"
+msgstr "Не позначено"
+
+#: clipboardHistory/database.py:43
+msgid "Texto de prueba"
+msgstr "Тестовий текст"
+
+#: clipboardHistory/dialogs.py:36
+msgid "Configuraciones"
+msgstr "Налаштування"
+
+#: clipboardHistory/dialogs.py:49
+msgid ""
+"Selecciona el número máximo de cadenas a guardar en la base de datos. 0 "
+"indica sin límite:"
+msgstr ""
+"Виберіть максимальну кількість рядків для збереження в базі даних. 0 означає "
+"відсутність обмежень:"
+
+#: clipboardHistory/dialogs.py:55
+msgid "Activar los &sonidos del complemento"
+msgstr "Увімкнути &звуки додатка"
+
+#: clipboardHistory/dialogs.py:59
+msgid "Verbalizar el &número de índice de los elementos de la lista"
+msgstr "Показувати номер &елемента у списку"
+
+#: clipboardHistory/dialogs.py:63
+msgid "&Exportar base de datos"
+msgstr "&Експорт бази даних"
+
+#: clipboardHistory/dialogs.py:65
+msgid "&Importar base de datos"
+msgstr "&Імпорт бази даних"
+
+#: clipboardHistory/dialogs.py:67
+msgid "&Guardar cambios"
+msgstr "&Зберегти зміни"
+
+#: clipboardHistory/dialogs.py:69 clipboardHistory/dialogs.py:211
+msgid "&Cancelar"
+msgstr "&Скасувати"
+
+#: clipboardHistory/dialogs.py:109
+msgid "Sin cambios en la configuración"
+msgstr "Без змін конфігурації"
+
+#: clipboardHistory/dialogs.py:113
+msgid "Cambios guardados correctamente"
+msgstr "Зміни успішно збережено"
+
+#: clipboardHistory/dialogs.py:131
+msgid "Exportar base de datos"
+msgstr "Експорт бази даних"
+
+#: clipboardHistory/dialogs.py:136
+msgid "Base de datos exportada correctamente"
+msgstr "Базу даних успішно експортовано"
+
+#: clipboardHistory/dialogs.py:144
+msgid "Importar base de datos"
+msgstr "Імпорт бази даних"
+
+#: clipboardHistory/dialogs.py:162
+msgid ""
+"Hay {} elementos diferentes en el archivo de respaldo. ¿Quieres añadirlos a "
+"la base de datos?"
+msgstr ""
+"У файлі резервної копії є {} різних елементів, ви хочете додати їх до бази "
+"даних?"
+
+#: clipboardHistory/dialogs.py:162 clipboardHistory/dialogs.py:368
+msgid "Atención"
+msgstr "Увага"
+
+#: clipboardHistory/dialogs.py:168
+msgid "{} elementos agregados"
+msgstr "Додано елементів: {}"
+
+#: clipboardHistory/dialogs.py:171
+msgid "No hay nuevos elementos para agregar"
+msgstr "Немає нових елементів для додавання"
+
+#: clipboardHistory/dialogs.py:174
+msgid ""
+"Error al intentar acceder a la base de datos de respaldo. El archivo no es "
+"válido o está corrupto"
+msgstr ""
+"Помилка під час спроби отримати доступ до резервної бази даних. Файл "
+"недійсний або пошкоджений"
+
+#: clipboardHistory/dialogs.py:177
+msgid "Error inesperado: {}"
+msgstr "Неочікувана помилка: {}"
+
+#: clipboardHistory/dialogs.py:188
+msgid "Eliminar elementos"
+msgstr "Видалити елементи"
+
+#: clipboardHistory/dialogs.py:199
+msgid "Selecciona el número de elementos a eliminar"
+msgstr "Виберіть кількість елементів для видалення"
+
+#: clipboardHistory/dialogs.py:205
+msgid "Incluir los &favoritos en la eliminación"
+msgstr "Додати &улюблене до видалення"
+
+#: clipboardHistory/dialogs.py:209
+msgid "&Eliminar"
+msgstr "&Видалити"
+
+#: clipboardHistory/dialogs.py:254
+msgid "Elementos eliminados"
+msgstr "Видалені елементи"
+
+#: clipboardHistory/dialogs.py:288
+msgid "Historial"
+msgstr "Історія"
+
+#: clipboardHistory/dialogs.py:343
+msgid "Copiado"
+msgstr "Скопійовано"
+
+#: clipboardHistory/dialogs.py:366
+msgid "¿Seguro que quieres eliminar todo el contenido de la base de datos?"
+msgstr "Ви впевнені, що бажаєте видалити весь вміст із бази даних?"
+
+#: clipboardHistory/dialogs.py:376
+msgid "Base de datos eliminada"
+msgstr "Базу даних видалено"
+
+#: clipboardHistory/dialogs.py:387
+msgid "Actualizando"
+msgstr "Оновлення"
+
+#~ msgid ""
+#~ "Módulo global que guarda el historial del portapapeles de Windows en una "
+#~ "base de datos local, permitiendo la persistencia y la gestión a través de "
+#~ "una interfaz invisible con opciones avanzadas, como a través de una "
+#~ "interfaz gráfica simplificada.\n"
+#~ "Permite buscar, visualizar, obtener datos del texto, gestionar favoritos, "
+#~ "pegar contenido en el foco,exportar e importar la base de datos."
+#~ msgstr ""
+#~ "Глобальний модуль, який зберігає історію буфера обміну Windows у "
+#~ "локальній базі даних, що дозволяє зберігати та керувати через невидимий "
+#~ "інтерфейс із розширеними параметрами, наприклад через спрощений графічний "
+#~ "інтерфейс.\n"
+#~ "Він дозволяє шукати, переглядати, отримувати текстові дані, керувати "
+#~ "улюбленим, вставляти вміст у фокус, експортувати та імпортувати базу "
+#~ "даних."
