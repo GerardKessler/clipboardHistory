@@ -63,8 +63,10 @@ class ClipboardMonitor:
 		wc.lpszClassName = "ClipboardListener"
 		wc.hInstance = ctypes.windll.kernel32.GetModuleHandleW(None)
 		wc.hIcon = wc.hCursor = wc.hbrBackground = None
+		# Verificar si la clase ya está registrada
 		if not ctypes.windll.user32.RegisterClassW(ctypes.byref(wc)):
-			raise ctypes.WinError()
+			if not ctypes.windll.user32.RegisterClassW(ctypes.byref(wc)):
+				raise ctypes.WinError()
 		self.hwnd = ctypes.windll.user32.CreateWindowExW(0, wc.lpszClassName, "Clipboard Monitor", 0, 0, 0, 0, 0, None, None, wc.hInstance, None)
 
 	def wnd_proc(self, hwnd, msg, wParam, lParam):
@@ -115,4 +117,10 @@ class ClipboardMonitor:
 		ctypes.windll.user32.PostQuitMessage(0)
 		if self.thread:
 			self.thread.join()
-
+		
+		# Desregistrar la clase de ventana
+		wc = WNDCLASS()
+		wc.lpszClassName = "ClipboardListener"
+		hInstance = ctypes.windll.kernel32.GetModuleHandleW(None)
+		if ctypes.windll.user32.GetClassInfoW(hInstance, wc.lpszClassName, ctypes.byref(wc)):
+			ctypes.windll.user32.UnregisterClassW(wc.lpszClassName, hInstance)
